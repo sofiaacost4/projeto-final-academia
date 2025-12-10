@@ -8,8 +8,6 @@ class Aula:
         self.set_dt_fim(dt_fim)
         self.set_id_instrutor(id_instrutor)
     
-    def  __str__(self): 
-        return f'{self.__id} - {self.__tipo} - {self.__dt_inicio.strftime('%d/%m/%Y %H:%M')} - {self.__dt_fim.strftime('%d/%m/%Y %H:%M')} - {self.__id_instrutor}'
     
     def get_id(self): return self.__id
     def get_tipo(self): return self.__tipo
@@ -30,18 +28,8 @@ class Aula:
     @staticmethod
     def from_json(self):
         return Aula(dic["id"], dic["tipo"], dic["inicio"], dic["fim"], dic["instrutor"])
-    import json
-    from models.dao import DAO
 
-    class AulaDAO(DAO):
-         @classmethod
-         def abrir(cls):
-              cls._objetos = []
-              try:
-                   with open("aulas.json", mode="r") as arquivo:
-                        list_dic = json.load(arquivo)
-                        for dic in list_dic:
-                             obj = Aula.from_json(dic)
-                             cls.objetos.append(obj)
-              except FileNotFoundError:
-                   pass
+    def  __str__(self): 
+        return f'{self.__id} - {self.__tipo} - {self.__dt_inicio.strftime('%d/%m/%Y %H:%M')} - {self.__dt_fim.strftime('%d/%m/%Y %H:%M')} - {self.__id_instrutor}'
+    
+    

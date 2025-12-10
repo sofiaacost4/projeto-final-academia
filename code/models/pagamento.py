@@ -5,9 +5,6 @@ class Pagamento:
         self.set_valor(valor)
         self.id_inscricao(id_inscricao)
 
-    def __str__(self):
-        return f'{self.__id} - {self.__status} - {self.__valor} - {self.__id_inscricao}'
-
     def get_id(self): return self.__id
     def get_status(self): return self.__status
     def get_valor(self): return self.__valor
@@ -26,19 +23,8 @@ class Pagamento:
     def from_json(dic):
        return Pagamento(dic["id"], dic["status"], dic["valor"], dic["id_inscricao"])
     
-     import json
-    from models.dao import DAO
-
-    class PagamentoDAO(DAO):
-         @classmethod
-         def abrir(cls):
-              cls._objetos = []
-              try:
-                   with open("pagamentos.json", mode="r") as arquivo:
-                        list_dic = json.load(arquivo)
-                        for dic in list_dic:
-                             obj = Pagamento.from_json(dic)
-                             cls.objetos.append(obj)
-              except FileNotFoundError:
-                   pass
+    def __str__(self):
+        return f'{self.__id} - {self.__status} - {self.__valor} - {self.__id_inscricao}'
+    
+    
     

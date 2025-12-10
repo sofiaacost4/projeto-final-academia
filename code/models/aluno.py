@@ -6,9 +6,6 @@ class Aluno:
          self.set_fone(fone) 
          self.set_senha(senha)
     
-    def __str__(self):
-         return f'{self.__id} - {self.__nome} - {self.__email} - {self.__fone} - {self.__senha}'
-    
     # GETS
     def get_id(self): return self.__id
     def get_nome(self): return self.__nome
@@ -28,7 +25,6 @@ class Aluno:
          if senha == "": raise ValueError("A senha é obrigatória")
          self.__senha = senha
 
-    # ARMAZENANDO DADOS COM JSON
     def to_json(self):
          dic = {"id": self.__id, "nome":self.__nome, "email":self.__email, "senha": self.__senha}  
          return dic
@@ -37,18 +33,5 @@ class Aluno:
     def from_json(dic):
          return Aluno(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"])    
     
-    import json
-    from models.dao import DAO
-
-    class AlunoDAO(DAO):
-         @classmethod
-         def abrir(cls):
-              cls._objetos = []
-              try:
-                   with open("alunos.json", mode="r") as arquivo:
-                        list_dic = json.load(arquivo)
-                        for dic in list_dic:
-                             obj = Aluno.from_json(dic)
-                             cls.objetos.append(obj)
-              except FileNotFoundError:
-                   pass
+    def __str__(self):
+         return f'{self.__id} - {self.__nome} - {self.__email} - {self.__fone} - {self.__senha}'
