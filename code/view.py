@@ -1,12 +1,15 @@
 from models.aluno import Aluno
+from models.instrutor import Instrutor
+from models.aula import Aula
 from models.dao_sql.alunodao import AlunoDAO
 from models.dao_sql.instrutordao import InstrutorDAO
+from models.dao_sql.auladao import AulaDAO
 
 class View:
     def criar_gestor():
         for obj in View.aluno_listar():
             if obj.get_email() == "gestor": return
-        View.aluno_inserir("gestor", "gestor", "(84) 947479576", "1234")
+        View.aluno_inserir("gestor", "gestor", "(84) 947479576", "123")
 
     def aluno_inserir(nome, email, fone, senha):
         try:
@@ -52,4 +55,9 @@ class View:
     def instrutor_listar():
         r = InstrutorDAO.listar()
         r.sort(key = lambda obj : obj.get_nome())
+        return r
+    
+    def aula_listar():
+        r = AulaDAO.listar()
+        r.sort(key = lambda obj : obj.get_data())
         return r

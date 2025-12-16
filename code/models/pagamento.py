@@ -15,12 +15,12 @@ class Pagamento:
     def set_valor(self, valor): self.__valor = valor
     def set_inscricao(self, id_inscricao): self.__id_inscricao = id_inscricao
 
-    def to_json(self):
+    def to_dic(self):
         dic = {"id": self.__id, "status": self.__status, "valor": self.__valor, "id_inscricao" = id_inscricao}
         return dic
     
     @staticmethod
-    def from_json(dic):
+    def from_dic(dic):
        return Pagamento(dic["id"], dic["status"], dic["valor"], dic["id_inscricao"])
     
     def __str__(self):

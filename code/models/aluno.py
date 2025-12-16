@@ -26,12 +26,12 @@ class Aluno:
          if senha == "": raise ValueError("A senha é obrigatória")
          self.__senha = senha
 
-    def to_json(self):
-         dic = {"id": self.__id, "nome":self.__nome, "email":self.__email, "senha": self.__senha}  
+    def to_dic(self):
+         dic = {"id": self.__id, "nome":self.__nome, "email":self.__email, "fone": self.__fone}  
          return dic
 
     @staticmethod
-    def from_json(dic):
+    def from_dic(dic):
          return Aluno(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"])    
     
     def __str__(self):

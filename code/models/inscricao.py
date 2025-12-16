@@ -17,12 +17,12 @@ class Inscricao:
           if  data < 2025 : raise ValueError("Datas passadas são inválidas.")
           self.__data = data
 
-     def to_json(self):
+     def to_dic(self):
          dic = {"id": self.__id, "status ":self.__status, "data":self.__data.sfrtime('%d/%m/%Y %H:%M')}  
          return dic
 
      @staticmethod
-     def from_json(dic):
+     def from_dic(dic):
          return Inscricao(dic["id"], dic["status"], dic["data"])    
 
      def __str__(self):

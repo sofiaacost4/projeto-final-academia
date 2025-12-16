@@ -13,11 +13,11 @@ class ManterAlunoUI:
         with tab4: ManterAlunoUI.excluir()
 
     def listar():
-        alunos = View.alunos_listar()
+        alunos = View.aluno_listar()
         if len(alunos) == 0: st.write("Nenhum aluno cadastrado.")
         else:
             list_dic = []
-            for obj in alunos: list_dic.append(obj.to_json())
+            for obj in alunos: list_dic.append(obj.to_dic())
             df = pd.DataFrame(list_dic)
             st.dataframe(df, hide_index=True, column_order=["id", "nome", "email", "fone"])
 
@@ -30,7 +30,7 @@ class ManterAlunoUI:
             try:
                 View.aluno_inserir(nome, email, fone, senha)
                 st.success("Aluno inserido com sucesso.")
-            except ValueError as error:
+            except ValueError as erro:
                 st.error(erro)
             time.sleep(2)
             st.rerun()
@@ -40,10 +40,10 @@ class ManterAlunoUI:
         if len(alunos) == 0: st.write("Nenhum aluno cadastrado.")
         else:
             op = st.selectbox("Atualização de alunos", alunos)
-            nome = st.selectbox("Informe o novo nome: ", op.get_nome())
-            email = st.selectbox("Informe o novo e-mail: ", op.get_email())
-            fone = st.selectbox("Informe o novo telefone: ", op.get_fone())
-            senha = st.selectbox("Informe a nova senha: ", op.get_senha(), type="password")
+            nome = st.text_input("Informe o novo nome: ", op.get_nome())
+            email = st.text_input("Informe o novo e-mail: ", op.get_email())
+            fone = st.text_input("Informe o novo telefone: ", op.get_fone())
+            senha = st.text_input("Informe a nova senha: ", op.get_senha(), type="password")
             if st.button("Atualizar"):
                 id = op.get_id()
                 View.aluno_atualizar(id, nome, email, fone, senha)
@@ -58,7 +58,7 @@ class ManterAlunoUI:
             op = st.selectbox("Exclusão de Alunos", alunos)
             if st.button("Excluir"):
                 id = op.get_id()
-                View.cliente_excluir(id)
+                View.aluno_excluir(id)
                 st.success("Aluno excluído com sucesso.")
                 time.sleep(2)
                 st.rerun()
