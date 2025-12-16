@@ -11,6 +11,7 @@ class Aluno:
     def get_nome(self): return self.__nome
     def get_email(self): return self.__email
     def get_fone(self): return self.__fone
+    def get_senha(self): return self.__senha
 
     # SETS
     def set_id(self, id): self.__id = id

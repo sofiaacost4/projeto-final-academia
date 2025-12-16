@@ -1,34 +1,34 @@
-from dao_sql import DAO
-from models.pagamento import Pagamento
+from models.dao_sql.dao import DAO
+from models.inscricao import Inscricao
 
-class PagamentoDAO(DAO):
+class InscricaoDAO(DAO):
     @classmethod
     def abrir(cls, obj):
         cls.abrir()
         sql = """
-            INSERT INTO pagamento (status, valor, id_inscricao)
+            INSERT INTO inscricao (status, data)
             VALUES (?, ?, ?, ?)
         """
-        cls.execute(sql, (obj.get_status(), obj.get_valor(), obj.get_id_inscricao()))
+        cls.execute(sql, (obj.get_status(), obj.get_data()))
         cls.fechar()
     
     @classmethod
     def listar(cls):
         cls.abrir()
-        sql = "SELECT id, status, valor, id_inscricao FROM pagamento"
+        sql = "SELECT id, status, data FROM inscricao"
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
-        objs = [Pagamento(id, status, valor, id_inscricao) for (id, status, valor, id_inscricao) in rows]
+        objs = [Inscricao(id, status, data) for (id, status, data) in rows]
         cls.fechar()
         return objs
     
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
-        sql = "SELECT id, status, valor, id_inscricao FROM pagamento WHERE id = ?"
+        sql = "SELECT id, status, data FROM inscricao WHERE id = ?"
         cursor = cls.execute(sql, (id,))
         rows = cursor.fetchone()
-        obj = Pagamento(*row) if row else None
+        obj = Inscricao(*row) if row else None
         cls.fechar()
         return obj
 
@@ -36,15 +36,15 @@ class PagamentoDAO(DAO):
     def atualizar(cls, obj):
         cls.abrir()
         sql = """
-            UPDATE pagamento SET status=?, valor=?, id_instrutor=?
+            UPDATE inscricao SET status=?, data=?
             WHERE id=?
         """
-        cls.execute(sql, (obj.get_status, obj.get_valor(), obj.get_id_instrutor(), obj.get_id()))
+        cls.execute(sql, (obj.get_status, obj.get_data(), obj.get_id()))
         cls.fechar()
 
     @classmethod
     def excluir(cls, obj):
         cls.abrir()
-        sql = "DELETE FROM pagamento WHERE id=?"
+        sql = "DELETE FROM inscricao WHERE id=?"
         cls.execute(sql, (obj.get_id(),))
         cls.fechar()

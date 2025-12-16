@@ -1,4 +1,4 @@
-from dao_sql import DAO
+from models.dao_sql.dao import DAO
 from models.aula import Aula
 
 class AulaDAO(DAO):
