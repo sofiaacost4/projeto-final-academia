@@ -21,7 +21,7 @@ class View:
                 if a.get_email() == email:
                     raise ValueError("Este email não está disponível.")
             for i in View.instrutor_listar():
-                if i.get_email() == eamil:
+                if i.get_email() == email:
                     raise ValueError("Este email não está disponível.")
             aluno = Aluno(0, nome, email, fone, senha)
             AlunoDAO.inserir(aluno)
@@ -44,9 +44,9 @@ class View:
             raise erro
     def aluno_excluir(id):
         try:
-            for h in View.aula_listar():
-                if h.get_id_aluno() == id:
-                    raise ValueError("Esse aluno não pode ser excluído pois está inscrito em uma aula.")
+#            for h in View.aula_listar():
+#                if h.get_id_aluno() == id:
+#                    raise ValueError("Esse aluno não pode ser excluído pois está inscrito em uma aula.")
             AlunoDAO.excluir(id)
         except ValueError as erro:
             raise erro

@@ -40,7 +40,6 @@ class IndexUI:
         return None
 
     def main():
-        View.criar_gestor()
         IndexUI.sidebar()
 
     def sair_do_sistema():
@@ -50,4 +49,6 @@ class IndexUI:
             st.rerun()
             
 DAO.criar_tabelas()
+View.criar_gestor()
+
 IndexUI.main()
