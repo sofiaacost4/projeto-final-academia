@@ -7,7 +7,6 @@
 
 3. **Objetivo do Produto**  
    Evitar conflitos de agendamento de instrutores com mais de uma especialidade na academia, garantindo o controle eficaz sobre suas disponibilidades e especialidades através do:  
-* Gerenciamento das especialidades dos instrutores;  
 * Controle da disponibilidade dos instrutores;  
   - Evitando conflitos de horário;  
   - Agilizando o processo de agendamento;  
