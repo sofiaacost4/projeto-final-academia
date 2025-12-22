@@ -14,7 +14,7 @@ O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos regist
 
 **2 Atores**
 
-* Administrador
+* Gestor
 
 **3 Pré-condições**
 
