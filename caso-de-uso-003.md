@@ -40,7 +40,7 @@ O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos regist
 5. O Usuário Ator confirma o cadastro;  
 6. O sistema valida os dados;  
 7. O sistema cria o registro e persiste os dados na base;  
-8. O sistema exibe a mensagem de sucesso e retorna à tela inicial de gestão de usuários.
+8. O sistema exibe a mensagem de sucesso e retorna à tela de cadastro de novo usuário.
 
 **5.2 Fluxo alternativo (gestor)**  
 	*A1: Dados Opcionais Preenchidos*
