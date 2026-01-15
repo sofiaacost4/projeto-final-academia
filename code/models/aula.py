@@ -1,6 +1,6 @@
 from datetime import datetime
 
-class Aula:
+class Esporte:
     def __init__(self, id, tipo, dt_inicio, dt_fim, id_instrutor, dia):
         self.set_id(id)
         self.set_tipo(tipo)
@@ -30,7 +30,7 @@ class Aula:
     
     @staticmethod
     def from_dic(self):
-        return Aula(dic["id"], dic["tipo"], dic["inicio"], dic["fim"], dic["instrutor"], dic["dia"])
+        return Esporte(dic["id"], dic["tipo"], dic["inicio"], dic["fim"], dic["instrutor"], dic["dia"])
 
     def  __str__(self): 
         return f'{self.__id} - {self.__tipo} - {self.__dt_inicio.strftime('%d/%m/%Y %H:%M')} - {self.__dt_fim.strftime('%d/%m/%Y %H:%M')} - {self.__id_instrutor} - {self.__dia.strftime('%d/%m/%Y %H:%M')}'
