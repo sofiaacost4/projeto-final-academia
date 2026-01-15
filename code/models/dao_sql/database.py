@@ -44,9 +44,9 @@ class Database:
             );
         """)
 
-        # tabela Aula
+        # tabela Esporte
         cls.execute("""
-            CREATE TABLE IF NOT EXISTS aula (
+            CREATE TABLE IF NOT EXISTS esporte (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 tipo TEXT NOT NULL,
                 dt_inicio TEXT NOT NULL, 
