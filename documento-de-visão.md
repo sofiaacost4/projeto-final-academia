@@ -24,7 +24,7 @@
 
 6. **Restrições e Premissas**  
    **6.1. Premissas:**  
-1. Cada aula requer apenas um instrutor;  
+1. Cada esporte requer apenas um instrutor;  
 2. Os instrutores informam corretamente sua disponibilidade semanal;  
 3. As especialidades dos instrutores são cadastradas corretamente;  
 4. Os esportes ocorrem em horários fixos e com duração predefinida;  
