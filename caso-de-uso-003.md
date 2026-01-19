@@ -14,7 +14,7 @@ O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos regist
 
 **2 Atores**
 
-* Administrador
+* Gestor
 
 **3 Pré-condições**
 
@@ -33,14 +33,14 @@ O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos regist
 **5 Fluxos de evento**  
 **5.1 Fluxo básico**
 
-1. O Usuário Ator inicia a função de cadastro de novo usuário;  
-2. O sistema exibe o formulário de cadastro;  
-3. O Usuário Ator seleciona o tipo de perfil (aluno ou instrutor);  
+1. O Usuário Ator seleciona o tipo de perfil a ser cadastrado (aluno ou instrutor);  
+2. O Usuário Ator inicia a função de cadastro de novo usuário;  
+3. O sistema exibe o formulário de cadastro;  
 4. O Usuário Ator preenche todos os campos obrigatórios;  
 5. O Usuário Ator confirma o cadastro;  
 6. O sistema valida os dados;  
 7. O sistema cria o registro e persiste os dados na base;  
-8. O sistema exibe a mensagem de sucesso e retorna à tela inicial de gestão de usuários.
+8. O sistema exibe a mensagem de sucesso e retorna à tela de cadastro de novo usuário.
 
 **5.2 Fluxo alternativo (gestor)**  
 	*A1: Dados Opcionais Preenchidos*

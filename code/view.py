@@ -1,9 +1,9 @@
 from models.aluno import Aluno
 from models.instrutor import Instrutor
-from models.aula import Aula
+from models.esporte import Esporte
 from models.dao_sql.alunodao import AlunoDAO
 from models.dao_sql.instrutordao import InstrutorDAO
-from models.dao_sql.auladao import AulaDAO
+from models.dao_sql.esportedao import EsporteDAO
 
 class View:
     def criar_gestor():
@@ -82,7 +82,7 @@ class View:
                 return {"id" : p.get_id(), "nome" : p.get_nome()}
         return None
 
-    def aula_listar():
-        r = AulaDAO.listar()
+    def esporte_listar():
+        r = esporteDAO.listar()
         r.sort(key = lambda obj : obj.get_data())
         return r
