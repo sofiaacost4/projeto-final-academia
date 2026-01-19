@@ -1,8 +1,11 @@
 import sqlite3
+import os
 
 class Database:
     conn = None
-    nome_bd ="academia.db"
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    nome_bd = os.path.join(BASE_DIR, "academia.db")
 
     @classmethod
     def abrir(cls):
@@ -48,12 +51,25 @@ class Database:
         cls.execute("""
             CREATE TABLE IF NOT EXISTS esporte (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                tipo TEXT NOT NULL,
-                dt_inicio TEXT NOT NULL, 
+                tipo TEXT NOT NULL               
+            );
+        """)
+        # tabela Aula
+        cls.execute("""
+            CREATE TABLE IF NOT EXISTS aula (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_esporte INTEGER NOT NULL,
+                dt_inicio TEXT NOT NULL,
                 dt_fim TEXT,
-                id_instrutor INTEGER,
+                id_instrutor INTEGER NOT NULL,
 
-                FOREIGN KEY (id_instrutor) REFERENCES instrutor(id) ON DELETE CASCADE
+                FOREIGN KEY (id_esporte)
+                    REFERENCES esporte(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (id_instrutor)
+                    REFERENCES instrutor(id)
+                    ON DELETE CASCADE
             );
         """)
 

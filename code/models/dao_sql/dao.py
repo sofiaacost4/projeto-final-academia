@@ -46,3 +46,5 @@ class DAO:
         cls.execute(sql_aluno)
         cls.execute(sql_instrutor)
         cls.fechar()
+
+

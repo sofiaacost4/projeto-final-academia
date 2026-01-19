@@ -8,7 +8,8 @@ from models.dao_sql.esportedao import EsporteDAO
 class View:
     def criar_gestor():
         for obj in View.aluno_listar():
-            if obj.get_email() == "gestor": return
+            if obj.get_email() == "gestor":
+                return
         View.aluno_inserir("gestor", "gestor", "(84) 947479576", "123")
 
     def aluno_listar():

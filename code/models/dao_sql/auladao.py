@@ -1,35 +1,35 @@
 from models.dao_sql.dao import DAO
 from models.dao_sql.database import Database
-from models.pagamento import Pagamento
+from models.aula import Aula
 
-class PagamentoDAO(DAO):
+class AulaDAO(DAO):
     @classmethod
     def abrir(cls, obj):
         cls.abrir()
         sql = """
-            INSERT INTO pagamento (status, valor, id_inscricao)
+            INSERT INTO esporte (id_esporte, dt_inicio, dt_fim, id_instrutor)
             VALUES (?, ?, ?, ?)
         """
-        cls.execute(sql, (obj.get_status(), obj.get_valor(), obj.get_id_inscricao()))
+        cls.execute(sql, (obj.get_tipo(), obj.get_dt_incicio(), obj.get_dt_fim(), obj.get_id_instrutor()))
         cls.fechar()
     
     @classmethod
     def listar(cls):
         cls.abrir()
-        sql = "SELECT id, status, valor, id_inscricao FROM pagamento"
+        sql = "SELECT id, id_esporte, dt_inicio, dt_fim, id_instrutor FROM aula"
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
-        objs = [Pagamento(id, status, valor, id_inscricao) for (id, status, valor, id_inscricao) in rows]
+        objs = [Esporte(id, id_esporte, dt_inicio, dt_fim, id_instrutor) for (id, id_esporte, dt_inicio, dt_fim, id_instrutor) in rows]
         cls.fechar()
         return objs
     
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
-        sql = "SELECT id, status, valor, id_inscricao FROM pagamento WHERE id = ?"
+        sql = "SELECT id, id_esporte, dt_inicio, dt_fim, id_instrutor FROM aula WHERE id = ?"
         cursor = cls.execute(sql, (id,))
         rows = cursor.fetchone()
-        obj = Pagamento(*row) if row else None
+        obj = Esporte(*row) if row else None
         cls.fechar()
         return obj
 
@@ -37,15 +37,15 @@ class PagamentoDAO(DAO):
     def atualizar(cls, obj):
         cls.abrir()
         sql = """
-            UPDATE pagamento SET status=?, valor=?, id_instrutor=?
+            UPDATE esporte SET id_esporte=?, dt_inicio=?, dt_fim=?, id_instrutor=?
             WHERE id=?
         """
-        cls.execute(sql, (obj.get_status, obj.get_valor(), obj.get_id_instrutor(), obj.get_id()))
+        cls.execute(sql, (obj.get_id_esporte(), obj.get_dt_incicio(), obj.get_dt_fim(), obj.get_id_instrutor(), obj.get_id()))
         cls.fechar()
 
     @classmethod
     def excluir(cls, obj):
         cls.abrir()
-        sql = "DELETE FROM pagamento WHERE id=?"
+        sql = "DELETE FROM esporte WHERE id=?"
         cls.execute(sql, (obj.get_id(),))
         cls.fechar()

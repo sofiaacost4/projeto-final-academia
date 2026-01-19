@@ -4,6 +4,7 @@ from templates.abrircontaUI import AbrirContaUI
 from templates.manteralunoUI import ManterAlunoUI
 from templates.perfilalunoUI import PerfilAlunoUI
 from models.dao_sql.dao import DAO
+from models.dao_sql.database import Database
 import streamlit as st
 
 class IndexUI:

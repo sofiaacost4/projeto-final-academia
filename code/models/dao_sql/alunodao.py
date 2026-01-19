@@ -1,4 +1,5 @@
 from models.dao_sql.dao import DAO
+from models.dao_sql.database import Database
 from models.aluno import Aluno
 
 class AlunoDAO(DAO):
