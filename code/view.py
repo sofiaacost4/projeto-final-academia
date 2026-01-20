@@ -45,9 +45,9 @@ class View:
             raise erro
     def aluno_excluir(id):
         try:
-#            for h in View.aula_listar():
-#                if h.get_id_aluno() == id:
-#                    raise ValueError("Esse aluno não pode ser excluído pois está inscrito em uma aula.")
+#            for h in View.aluno_listar():
+#                if h.get_email() == "gestor":
+ #                   raise ValueError("Gestor não pode ser excluído.")
             AlunoDAO.excluir(id)
         except ValueError as erro:
             raise erro

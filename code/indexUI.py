@@ -49,7 +49,6 @@ class IndexUI:
             del st.session_state["usuario_nome"]
             st.rerun()
             
-DAO.criar_tabelas()
 View.criar_gestor()
 
 IndexUI.main()

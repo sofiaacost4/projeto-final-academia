@@ -20,31 +20,6 @@ class DAO:
         cursor.execute(sql, params or [])
         cls.conn.commit()
         return cursor
-    @classmethod
 
-    def criar_tabelas(cls):
-        cls.abrir()
-
-        sql_aluno = """
-        CREATE TABLE IF NOT EXISTS aluno (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL,
-            fone TEXT,
-            senha TEXT NOT NULL
-        )
-        """
-        sql_instrutor = """
-        CREATE TABLE IF NOT EXISTS instrutor (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL,
-            fone TEXT,
-            senha TEXT NOT NULL
-        )
-        """
-        cls.execute(sql_aluno)
-        cls.execute(sql_instrutor)
-        cls.fechar()
 
 

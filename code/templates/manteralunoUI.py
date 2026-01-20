@@ -57,8 +57,13 @@ class ManterAlunoUI:
         else: 
             op = st.selectbox("Exclusão de Alunos", alunos)
             if st.button("Excluir"):
-                id = op.get_id()
-                View.aluno_excluir(id)
-                st.success("Aluno excluído com sucesso.")
+                try:
+                    id = op.get_id()
+                    View.aluno_excluir(id)
+                    st.success("Aluno excluído com sucesso.")
+                    time.sleep(2)
+                    st.rerun()
+                except ValueError as erro:
+                    st.error(erro)
                 time.sleep(2)
                 st.rerun()
