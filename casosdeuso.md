@@ -1,4 +1,4 @@
-## 📑 Caso de Uso: Cadastrar Aluno/Instrutor
+## 📑 Caso de Uso 003: Cadastrar Aluno/Instrutor 
 
 ### 1. Resumo
 O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos registros (**alunos** ou **instrutores**) no sistema, armazenando seus dados principais para que possam acessar e utilizar as funcionalidades específicas de cada perfil.
@@ -11,8 +11,8 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 ---
 
 ### 3. Pré-condições
-* O Usuário Ator deve estar **logado** no sistema.
-* O Usuário Ator deve possuir as **permissões necessárias** para cadastrar novos usuários.
+* O Usuário deve estar **logado** no sistema.
+* O Usuário deve possuir as **permissões necessárias** para cadastrar novos usuários.
 * O sistema deve estar **operacional** e a **base de dados acessível**.
 * A opção de cadastro de usuário deve estar **disponível** e **selecionada** pelo ator.
 
@@ -28,12 +28,12 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 
 ### 5. Fluxos de Evento
 
-#### 5.1 Fluxo Básico (Sucesso)
-1. O Usuário Ator inicia a função de **cadastro de novo usuário**.
+#### 5.1 Fluxo Básico
+1. O Usuário inicia a função de **cadastro de novo usuário**.
 2. O sistema exibe o **formulário de cadastro**.
-3. O Usuário Ator **seleciona o tipo de perfil** (aluno ou instrutor).
-4. O Usuário Ator **preenche todos os campos obrigatórios**.
-5. O Usuário Ator **confirma o cadastro**.
+3. O Usuário **seleciona o tipo de perfil** (aluno ou instrutor).
+4. O Usuário **preenche todos os campos obrigatórios: nome, senha, e no caso do instrutor, especialidade também**.
+5. O Usuário **confirma o cadastro**.
 6. O sistema **valida os dados**.
 7. O sistema **cria o registro** e **persiste os dados na base**.
 8. O sistema exibe a **mensagem de sucesso** e retorna à tela inicial de gestão de usuários.
@@ -41,7 +41,7 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 #### 5.2 Fluxo Alternativo
 
 ##### A1: Dados Opcionais Preenchidos
-* **Pós Passo 4** do Fluxo Principal: O Usuário Ator preenche **campos opcionais**.
+* **Pós Passo 4** do Fluxo Principal: O Usuário Ator preenche **campos opcionais: email e telefone**.
 * Continua a partir do **Passo 5** do Fluxo Principal.
 
 ##### A2: Seleção de Perfil por Permissão
@@ -54,13 +54,13 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 * Ocorre no **Passo 6** do Fluxo Principal.
 * O sistema detecta que um ou mais campos obrigatórios estão **vazios ou inválidos**.
 * O sistema interrompe o processamento e exibe uma **mensagem de erro** indicando quais campos devem ser corrigidos.
-* O Usuário Ator corrige os dados e tenta novamente.
+* O Usuário corrige os dados e tenta novamente.
 
 ##### E2: Usuário Já Cadastrado
 * Ocorre no **Passo 6** do Fluxo Principal.
 * O sistema detecta que o **identificador
 
-## 🔒 Caso de Uso: Fazer Login
+## 🔒 Caso de Uso 013: Fazer Login
 
 ### 1. Resumo
 O caso de uso **Fazer Login** permite que qualquer usuário cadastrado (**Aluno**, **Instrutor** ou **Administrador**) acesse o sistema após a validação de suas credenciais.
@@ -75,14 +75,14 @@ O caso de uso **Fazer Login** permite que qualquer usuário cadastrado (**Aluno*
 ---
 
 ### 3. Pré-condições
-* O Usuário Ator (Aluno, Instrutor ou Administrador) deve ter um **registro válido** e suas credenciais (**login/senha**) na base de dados.
+* O Usuário (Aluno, Instrutor ou Administrador) deve ter um **registro válido** e suas credenciais (**login/senha**) na base de dados.
 * O sistema deve estar **operacional** e a **tela de login** deve estar acessível.
 * O sistema deve estar pronto para **receber e processar** as credenciais.
 
 ---
 
 ### 4. Pós-condições
-* O Usuário Ator está **autenticado** e é direcionado para a **página inicial** de seu respectivo perfil (Aluno, Instrutor ou Administrador).
+* O Usuário está **autenticado** e é direcionado para a **página inicial** de seu respectivo perfil (Aluno, Instrutor ou Administrador).
 * Uma **sessão de usuário válida** é criada no sistema.
 
 ---
@@ -90,22 +90,14 @@ O caso de uso **Fazer Login** permite que qualquer usuário cadastrado (**Aluno*
 ### 5. Fluxos de Evento
 
 #### 5.1 Fluxo Básico
-1. O Usuário Ator acessa a **tela de login** do sistema.
+1. O Usuário acessa a **tela de login** do sistema.
 2. O sistema exibe os **campos de entrada** (Login/E-mail e Senha).
-3. O Usuário Ator **insere suas credenciais** nos campos apropriados.
-4. O Usuário Ator aciona o botão **"Entrar"** ou equivalente.
+3. O Usuário **insere suas credenciais** nos campos apropriados.
+4. O Usuário aciona o botão **"Entrar"** ou equivalente.
 5. O sistema **valida as credenciais** informadas com os dados armazenados na base.
 6. O sistema **verifica o perfil** associado às credenciais válidas (Aluno, Instrutor ou Administrador).
 7. O sistema **cria a sessão** e **direciona** o usuário para a área principal do perfil detectado.
 8. O sistema exibe uma **mensagem de boas-vindas** ou a página inicial do perfil.
-
-#### 5.2 Fluxo Alternativo: Recuperação de Senha
-* Ocorre **antes do Passo 3** do Fluxo Principal.
-1. O Usuário Ator aciona o link **"Esqueceu sua senha?"**.
-2. O sistema solicita o **e-mail ou nome de usuário** para recuperação.
-3. O Usuário Ator insere a informação e **confirma**.
-4. O sistema **envia um link ou código de redefinição** para o e-mail cadastrado.
-5. O sistema **retorna para a tela de login**.
 
 #### 5.3 Fluxo de Exceção
 
@@ -114,21 +106,21 @@ O caso de uso **Fazer Login** permite que qualquer usuário cadastrado (**Aluno*
 * O sistema **não encontra a combinação exata** de login/e-mail e senha na base de dados.
 * O sistema **interrompe o processamento** de login.
 * O sistema exibe uma **mensagem de erro genérica** para evitar vazamento de informações.
-* O Usuário Ator retorna ao **Passo 3** para tentar novamente.
+* O Usuário retorna ao **Passo 3** para tentar novamente.
 
 ##### E2: Usuário Inativo/Bloqueado
 * Ocorre no **Passo 5** do Fluxo Principal, **após a validação das credenciais**.
 * O sistema detecta que as credenciais são válidas, mas o status do usuário está como **"Inativo" ou "Bloqueado"**.
 * O sistema **interrompe o processamento** e exibe uma **mensagem de erro** específica para o bloqueio.
-* O Usuário Ator é **impedido de acessar** e permanece na tela de login.
+* O Usuário é **impedido de acessar** e permanece na tela de login.
 
 ##### E3: Falha de Comunicação com a Base de Dados
 * Ocorre no **Passo 5** do Fluxo Principal.
 * O sistema **não consegue acessar** ou se comunicar com o banco de dados para verificar as credenciais.
 * O sistema **interrompe o processamento** e exibe uma **mensagem de erro técnico**.
-* O Usuário Ator **permanece na tela de login**.
+* O Usuário **permanece na tela de login**.
 
-## ➕ Caso de Uso: Cadastrar Esporte
+## ➕ Caso de Uso 005: Cadastrar Esporte
 
 ### 1. Resumo
 O caso de uso **Cadastrar Esporte** permite que um Instrutor ou Administrador adicione um novo módulo de conteúdo ou esporte a um curso existente no sistema.
@@ -142,8 +134,8 @@ O caso de uso **Cadastrar Esporte** permite que um Instrutor ou Administrador ad
 ---
 
 ### 3. Pré-condições
-* O Usuário Ator (Instrutor ou Administrador) deve estar **logado** no sistema.
-* O Usuário Ator deve possuir as **permissões necessárias** para criar ou modificar cursos.
+* O Usuário (Instrutor ou Administrador) deve estar **logado** no sistema.
+* O Usuário deve possuir as **permissões necessárias** para criar ou modificar cursos.
 * O **Curso** ao qual o esporte será adicionado deve **existir** e estar cadastrado na base de dados.
 
 ---
@@ -158,13 +150,13 @@ O caso de uso **Cadastrar Esporte** permite que um Instrutor ou Administrador ad
 ### 5. Fluxos de Evento
 
 #### 5.1 Fluxo Básico
-1. O Usuário Ator acessa a seção de **gestão de modalidades/cursos**.
-2. O Usuário Ator **seleciona a modalidade** desejada para adicionar o esporte.
-3. O Usuário Ator inicia a função **"Cadastrar Esporte"**.
+1. O Usuário acessa a seção de **gestão de modalidades/cursos**.
+2. O Usuário **seleciona a modalidade** desejada para adicionar o esporte.
+3. O Usuário inicia a função **"Cadastrar Esporte"**.
 4. O sistema exibe o **formulário de cadastro de esporte**.
-5. O Usuário Ator **preenche os campos obrigatórios** exigidos dentro da modalidade.
-6. O Usuário Ator faz o **upload do material** da aula ou insere o **link** para o conteúdo.
-7. O Usuário Ator **confirma o cadastro**.
+5. O Usuário **preenche os campos obrigatórios** exigidos dentro da modalidade.
+6. O Usuário faz o **upload do material** da aula ou insere o **link** para o conteúdo.
+7. O Usuário **confirma o cadastro**.
 8. O sistema **valida os dados**.
 9. O sistema **cria o registro do esporte** e a associa à modalidade na base de dados.
 10. O sistema exibe a **mensagem de sucesso** e retorna à visão geral da modalidade.
@@ -173,12 +165,12 @@ O caso de uso **Cadastrar Esporte** permite que um Instrutor ou Administrador ad
 
 ##### A1: Conteúdo Opcional/Adicional
 * Ocorre **após o Passo 6** do Fluxo Principal.
-* O Usuário Ator **adiciona conteúdo extra** (Ex: material de apoio, slides).
+* O Usuário **adiciona conteúdo extra** (Ex: material de apoio, slides).
 * Continua no **Passo 7** do Fluxo Principal.
 
 ##### A2: Pré-requisitos para a Aula
 * Ocorre **após o Passo 5** do Fluxo Principal.
-* O Usuário Ator define **pré-requisitos** para este esporte (Ex: "O aluno deve ter concluído o Esporte 3").
+* O Usuário define **pré-requisitos** para este esporte (Ex: "O aluno deve ter concluído o Esporte 3").
 * Continua no **Passo 6** do Fluxo Principal. (O sistema armazena o requisito de conclusão).
 
 #### 5.3 Fluxo de Exceção
@@ -199,4 +191,4 @@ O caso de uso **Cadastrar Esporte** permite que um Instrutor ou Administrador ad
 * Ocorre no **Passo 7** do Fluxo Principal (durante o processamento do upload).
 * O sistema **não consegue processar ou armazenar** o arquivo de conteúdo (Ex: limite de tamanho excedido, erro de rede).
 * O sistema interrompe o processamento e exibe uma **mensagem de erro específica** sobre a falha do upload.
-* O Usuário Ator é solicitado a tentar novamente com o mesmo ou outro arquivo/link.
+* O Usuário é solicitado a tentar novamente com o mesmo ou outro arquivo/link.
