@@ -1,5 +1,4 @@
 from models.dao_sql.dao import DAO
-from models.dao_sql.database import Database
 from models.inscricao import Inscricao
 
 class InscricaoDAO(DAO):

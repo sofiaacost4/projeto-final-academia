@@ -8,12 +8,13 @@ class InstrutorDAO(DAO):
     def inserir(cls, obj):
         cls.abrir()
         sql = """
-            INSERT INTO instrutor (nome, email, fone, senha)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO instrutor (nome, email, especialidade, fone, senha)
+            VALUES (?, ?, ?, ?, ?)
         """
         cls.execute(sql, (
             obj.get_nome(),
             obj.get_email(),
+            obj.get_especialidade(),
             obj.get_fone(),
             obj.get_senha()
         ))
@@ -22,12 +23,12 @@ class InstrutorDAO(DAO):
     @classmethod
     def listar(cls):
         cls.abrir()
-        sql = "SELECT id, nome, email, fone, senha FROM instrutor"
+        sql = "SELECT id, nome, email, especialidade, fone, senha FROM instrutor"
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
         objs = [
-            Instrutor(id, nome, email, fone, senha)
-            for (id, nome, email, fone, senha) in rows
+            Instrutor(id, nome, email, especialidade, fone, senha)
+            for (id, nome, email, especialidade, fone, senha) in rows
         ]
         cls.fechar()
         return objs
@@ -35,7 +36,7 @@ class InstrutorDAO(DAO):
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
-        sql = "SELECT id, nome, email, fone, senha FROM instrutor WHERE id = ?"
+        sql = "SELECT id, nome, email, especialidade, fone, senha FROM instrutor WHERE id = ?"
         cursor = cls.execute(sql, (id,))
         row = cursor.fetchone()
         obj = Instrutor(*row) if row else None
@@ -53,6 +54,7 @@ class InstrutorDAO(DAO):
         cls.execute(sql, (
             obj.get_nome(),
             obj.get_email(),
+            obj.get_especialidade(),
             obj.get_fone(),
             obj.get_senha(),
             obj.get_id()

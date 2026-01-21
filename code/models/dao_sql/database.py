@@ -58,10 +58,15 @@ class Database:
         cls.execute("""
             CREATE TABLE IF NOT EXISTS aula (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_aluno INTEGER NOT NULL,
                 id_esporte INTEGER NOT NULL,
-                dt_inicio TEXT NOT NULL,
-                dt_fim TEXT,
+                dia TEXT NOT NULL,
+                confirmado INTEGER, 
                 id_instrutor INTEGER NOT NULL,
+
+                FOREIGN KEY (id_aluno)
+                    REFERENCES aluno(id)
+                    ON DELETE CASCADE,
 
                 FOREIGN KEY (id_esporte)
                     REFERENCES esporte(id)

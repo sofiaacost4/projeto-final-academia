@@ -2,15 +2,20 @@ from view import View
 from templates.loginUI import LoginUI
 from templates.abrircontaUI import AbrirContaUI
 from templates.manteralunoUI import ManterAlunoUI
+from templates.manterinstrutorUI import ManterInstrutorUI
+from templates.manteresporteUI import ManterEsporteUI
 from templates.perfilalunoUI import PerfilAlunoUI
+from templates.perfilinstrutorUI import PerfilInstrutorUI
 from models.dao_sql.dao import DAO
-from models.dao_sql.database import Database
+
 import streamlit as st
 
 class IndexUI:
     def menu_gestor():
-        op = st.sidebar.selectbox("Menu", ["Cadastro de Alunos", "Cadastro de Instrutores", "Cadastro de Aulas", "Cadastro de Inscrições", "Cadastro de Pagamentos"])
+        op = st.sidebar.selectbox("Menu", ["Cadastro de Alunos", "Cadastro de Instrutores", "Cadastro de Esportes", "Cadastro de Aulas", "Cadastro de Inscrições", "Cadastro de Pagamentos"])
         if op == "Cadastro de Alunos": ManterAlunoUI.main()
+        if op == "Cadastro de Instrutores": ManterInstrutorUI.main()
+        if op == "Cadastro de Esportes": ManterEsporteUI.main()
 
     def menu_visitante():
         st.title("GymTime")

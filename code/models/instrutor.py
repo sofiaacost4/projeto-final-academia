@@ -23,7 +23,7 @@ class Instrutor:
           self.__email = email
      def set_especialidade(self, especialidade):
           if especialidade == "": raise ValueError("A especialidade é obrigatória")
-          self.__especialidade == especialidade
+          self.__especialidade = especialidade
      def set_fone(self, fone): self.__fone = fone
      def set_senha(self, senha): 
           if senha == "": raise ValueError("A senha é obrigatória")

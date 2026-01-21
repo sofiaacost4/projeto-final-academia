@@ -16,7 +16,7 @@ class Pagamento:
     def set_inscricao(self, id_inscricao): self.__id_inscricao = id_inscricao
 
     def to_dic(self):
-        dic = {"id": self.__id, "status": self.__status, "valor": self.__valor, "id_inscricao" = id_inscricao}
+        dic = {"id": self.__id, "status": self.__status, "valor": self.__valor, "id_inscricao": self.__id_inscricao}
         return dic
     
     @staticmethod
