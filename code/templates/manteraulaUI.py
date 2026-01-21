@@ -75,8 +75,8 @@ class ManterAulaUI:
                     if aluno != None: id_aluno = aluno.get_id()
                     if esporte != None: ud_esporte = esporte.get_id()
                     if instrutores != None: id_instrutor = instrutor.get_id()
-                    View.horario_atualizar(op.get_id(), datetime.strftime(data, "%d/%m/%Y %H:%M"), confirmado, id_cliente, id_servico, id_profissional)
-                    st.success("Horário atualizado com sucesso")
+                    View.aula_atualizar(op.get_id(), datetime.strftime(dia "%d/%m/%Y %H:%M"), confirmado, id_aluno, id_esporte, id_instrutor)
+                    st.success("Aula atualizada com sucesso")
                 except ValueError as erro:
                     st.error(str(erro))
 

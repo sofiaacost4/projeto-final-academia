@@ -193,8 +193,8 @@ class View:
         InscricaoDAO.inserir(c)
 
     def inscricao_atualizar():
-        for a in View.inscricao_listar():
-            
+        for a in View.inscricao_listar(): 
+            pass
 
     def inscricao_excluir():
         pass

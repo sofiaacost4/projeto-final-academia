@@ -9,7 +9,6 @@ class Inscricao:
      def get_id(self): return self.__id
      def get_status(self): return self.__status
      def get_data(self): return self.__data
-     def get_fone(self): return self.__fone
 
      def set_id(self, id): self.__id = id
      def set_status(self, status): self.__status = status
