@@ -32,3 +32,6 @@ class ManterInscricaoUI:
                 st.sucess("Inscrição inserida com sucesso!")
             except Exception as erro:
                 st.error(str(error))
+    
+    def atualizar():
+        inscricoes 

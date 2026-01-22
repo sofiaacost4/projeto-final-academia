@@ -13,11 +13,11 @@ class Inscricao:
      def set_id(self, id): self.__id = id
      def set_status(self, status): self.__status = status
      def set_data(self, data):
-          if  data < 2025 : raise ValueError("Datas passadas são inválidas.")
+          if  data < datetime.now() : raise ValueError("Datas passadas são inválidas.")
           self.__data = data
 
      def to_dic(self):
-         dic = {"id": self.__id, "status ":self.__status, "data":self.__data.sfrtime('%d/%m/%Y %H:%M')}  
+         dic = {"id": self.__id, "status":self.__status, "data":self.__data.strftime('%d/%m/%Y %H:%M')}  
          return dic
 
      @staticmethod
@@ -25,6 +25,6 @@ class Inscricao:
          return Inscricao(dic["id"], dic["status"], dic["data"])    
 
      def __str__(self):
-         return f'{self.__id} - {self.__status} - {self.__data.strftime('%d/%m/%Y H%:%M')}'
+         return f'{self.__id} - {self.__status} - {self.__data.strftime('%d/%m/%Y H:%M')}'
     
     
