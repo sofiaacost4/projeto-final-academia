@@ -2,6 +2,7 @@ from models.aluno import Aluno
 from models.aula import Aula
 from models.instrutor import Instrutor
 from models.esporte import Esporte
+from models.inscricao import Inscricao
 from models.dao_sql.alunodao import AlunoDAO
 from models.dao_sql.auladao import AulaDAO
 from models.dao_sql.instrutordao import InstrutorDAO
@@ -9,6 +10,7 @@ from models.dao_sql.esportedao import EsporteDAO
 from models.dao_sql.inscricaodao import InscricaoDAO
 
 class View:
+    
     def criar_gestor():
         for obj in View.aluno_listar():
             if obj.get_email() == "gestor":
@@ -16,6 +18,7 @@ class View:
         View.aluno_inserir("gestor", "gestor", "(84) 947479576", "123")
 
     # ALUNO
+
     def aluno_listar():
         r = AlunoDAO.listar()
         r.sort(key = lambda obj : obj.get_nome())
@@ -61,7 +64,9 @@ class View:
                 return {"id" : c.get_id(), "nome" : c.get_nome()}
         return None
         
+
     # INSTRUTOR
+
     def instrutor_listar():
         instrutores = InstrutorDAO.listar()
         esportes = EsporteDAO.listar()
@@ -82,21 +87,27 @@ class View:
             ))
 
         return resultado
-    def instrutor_listar_id():
+    
+    def instrutor_listar_obj():
+        return InstrutorDAO.listar()
+    
+    def instrutor_listar_id(id):
         instrutor = InstrutorDAO.listar_id(id)
         return instrutor
+    
     def instrutor_inserir(nome, email, especialidade, fone, senha):
         try:
             for a in View.aluno_listar():
                 if a.get_email() == email:
                     raise ValueError("Este email não está disponível.")
-            for i in View.instrutor_listar():
+            for i in View.instrutor_listar_obj():
                 if i.get_email() == email:
                     raise ValueError("Este email não está disponível.")
             instrutor = Instrutor(0, nome, email, especialidade, fone, senha)
             InstrutorDAO.inserir(instrutor)
         except ValueError as erro:
             raise erro
+        
     def instrutor_atualizar(id, nome, email, especialidade, fone, senha):
         try:
             for a in View.aluno_listar():
@@ -112,13 +123,20 @@ class View:
             InstrutorDAO.atualizar(instrutor)
         except ValueError as erro:
             raise erro
-    def instrutor_excluir():
+        
+    def instrutor_excluir(id):
         instrutor = View.instrutor_listar_id(id)
-        InstrutorDAO.excluir(instrutor) # erro = não pode excluir um instrutor com AULA agendada
+        if instrutor is None:
+            raise ValueError("Instrutor não encontrado.")
+        InstrutorDAO.excluir(id)
+
     def instrutor_autenticar(email, senha):
-        for p in View.instrutor_listar():
+        for p in View.instrutor_listar_obj():
             if p.get_email() == email and p.get_senha() == senha:
-                return {"id" : p.get_id(), "nome" : p.get_nome()}
+                return {
+                    "id": p.get_id(),
+                    "nome": p.get_nome()
+                }
         return None
 
     # ESPORTE
@@ -194,10 +212,15 @@ class View:
 
     def inscricao_atualizar():
         for a in View.inscricao_listar(): 
-            pass
-
+            if a.get_id() != id:
+                raise ValueError("Não há nenhuma inscrição com este id.")
+            c = Inscricao(id, None, None)
+            InscricaoDAO(c)
     def inscricao_excluir():
-        pass
+        for a in View.inscricao_listar():
+            if a.get_status() == "confirmado": #OI COFIA SOSTA
+                raise ValueError("Inscrição não pode ser excluída, pois ainda está ativa.")
+        
 
 
     def pagamento_listar():

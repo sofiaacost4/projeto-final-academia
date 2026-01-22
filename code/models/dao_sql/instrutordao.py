@@ -1,5 +1,4 @@
 from models.dao_sql.dao import DAO
-from models.dao_sql.database import Database
 from models.instrutor import Instrutor
 
 class InstrutorDAO(DAO):
@@ -14,12 +13,12 @@ class InstrutorDAO(DAO):
         cls.execute(sql, (
             obj.get_nome(),
             obj.get_email(),
-            obj.get_especialidade(),
+            obj.get_especialidade(),  # id do esporte
             obj.get_fone(),
             obj.get_senha()
         ))
         cls.fechar()
-    
+
     @classmethod
     def listar(cls):
         cls.abrir()
@@ -32,23 +31,26 @@ class InstrutorDAO(DAO):
         ]
         cls.fechar()
         return objs
-    
+
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
-        sql = "SELECT id, nome, email, especialidade, fone, senha FROM instrutor WHERE id = ?"
+        sql = """
+            SELECT id, nome, email, especialidade, fone, senha
+            FROM instrutor
+            WHERE id = ?
+        """
         cursor = cls.execute(sql, (id,))
         row = cursor.fetchone()
-        obj = Instrutor(*row) if row else None
         cls.fechar()
-        return obj
+        return Instrutor(*row) if row else None
 
     @classmethod
     def atualizar(cls, obj):
         cls.abrir()
         sql = """
             UPDATE instrutor
-            SET nome=?, email=?, fone=?, senha=?
+            SET nome=?, email=?, especialidade=?, fone=?, senha=?
             WHERE id=?
         """
         cls.execute(sql, (
@@ -62,8 +64,8 @@ class InstrutorDAO(DAO):
         cls.fechar()
 
     @classmethod
-    def excluir(cls, obj):
+    def excluir(cls, id):
         cls.abrir()
         sql = "DELETE FROM instrutor WHERE id=?"
-        cls.execute(sql, (obj.get_id(),))
+        cls.execute(sql, (id,))
         cls.fechar()

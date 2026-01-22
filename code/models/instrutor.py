@@ -22,7 +22,7 @@ class Instrutor:
           if email == "": raise ValueError("O email é obrigatório")
           self.__email = email
      def set_especialidade(self, especialidade):
-          if especialidade == "": raise ValueError("A especialidade é obrigatória")
+          if especialidade is None: raise ValueError("A especialidade é obrigatória")
           self.__especialidade = especialidade
      def set_fone(self, fone): self.__fone = fone
      def set_senha(self, senha): 
@@ -30,12 +30,12 @@ class Instrutor:
           self.__senha = senha
 
      def to_dic(self):
-          dic = {"id": self.__id, "nome":self.__nome, "email":self.__email, "especialidade": self.__especialidade, "senha": self.__senha}  
+          dic = {"id": self.__id, "nome":self.__nome, "email":self.__email, "especialidade": self.__especialidade, "fone": self.__fone, "senha": self.__senha}  
           return dic
 
      @staticmethod
      def from_dic(dic):
-          return Aluno(dic["id"], dic["nome"], dic["email"], dic["especialidade"], dic["fone"], dic["senha"])    
+          return Instrutor(dic["id"], dic["nome"], dic["email"], dic["especialidade"], dic["fone"], dic["senha"])    
      
      def __str__(self):
          return f'{self.__id} - {self.__nome} - {self.__email} - {self.__especialidade} - {self.__fone} - {self.__senha}'
