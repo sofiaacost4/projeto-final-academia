@@ -109,21 +109,18 @@ class View:
             raise erro
         
     def instrutor_atualizar(id, nome, email, especialidade, fone, senha):
-        try:
-            for a in View.aluno_listar():
-                if email == "gestor":
-                    raise ValueError("Este email é de uso exclusivo do gestor.")
-                if a.get_id() != id:
-                    if a.get_email() == email:
-                        raise ValueError("Este email não está disponível.")
-            for i in View.instrutor_listar():
-                if i.get_email() == email:
+        if email == "gestor":
+            raise ValueError("Este email é de uso exclusivo do gestor.")
+        for a in View.aluno_listar():
+            if a.get_id() != id:
+                if a.get_email() == email:
                     raise ValueError("Este email não está disponível.")
-            instrutor = Instrutor(id, nome, email, especialidade, fone, senha)
-            InstrutorDAO.atualizar(instrutor)
-        except ValueError as erro:
-            raise erro
-        
+        for i in View.instrutor_listar_obj():
+            if i.get_email() == email and i.get_id() != id:
+                raise ValueError("Este email não está disponível.")
+        instrutor = Instrutor(id, nome, email, especialidade, fone, senha)
+        InstrutorDAO.atualizar(instrutor)
+
     def instrutor_excluir(id):
         instrutor = View.instrutor_listar_id(id)
         if instrutor is None:

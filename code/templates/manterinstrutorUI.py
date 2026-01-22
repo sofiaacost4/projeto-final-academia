@@ -21,14 +21,21 @@ class ManterInstrutorUI:
             st.write("Nenhum instrutor cadastrado.")
         else:
             esportes = View.esporte_listar()
-            mapa_esportes = {e.get_id(): e.get_tipo() for e in esportes}
+            mapa_esportes = {int(e.get_id()): e.get_tipo() for e in esportes}
             list_dic = []
             for obj in instrutores:
+                esp_id = int(obj.get_especialidade())
                 dic = obj.to_dic()
-                dic["especialidade"] = mapa_esportes.get(obj.get_especialidade(), "Não informado")
+                dic["especialidade"] = (
+                    mapa_esportes[esp_id]
+                    if esp_id in mapa_esportes
+                    else f"Especialidade inexistente (id={esp_id})")
                 list_dic.append(dic)
             df = pd.DataFrame(list_dic)
-            st.dataframe(df, hide_index=True, column_order=["id", "nome", "email", "especialidade", "fone"])
+            st.dataframe(
+                df,
+                hide_index=True,
+                column_order=["id", "nome", "email", "especialidade", "fone"])
 
     def inserir():
         especialidades = View.esporte_listar()
@@ -122,7 +129,7 @@ class ManterInstrutorUI:
             op = st.selectbox(
                 "Selecione o instrutor:",
                 instrutores,
-                format_func=lambda i: f"{i.get_nome()} ({i.get_email()})",
+                format_func=lambda i: f"{i.get_nome()} - {i.get_email()}",
                 key="instrutor_excluir"
             )
 
