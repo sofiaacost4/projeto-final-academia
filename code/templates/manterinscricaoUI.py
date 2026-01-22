@@ -30,4 +30,5 @@ class ManterInscricaoUI:
             try:
                 View.inscricao_inserir(status)
                 st.sucess("Inscrição inserida com sucesso!")
-            except 
+            except Exception as erro:
+                st.error(str(error))
