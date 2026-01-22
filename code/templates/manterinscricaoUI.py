@@ -29,4 +29,5 @@ class ManterInscricaoUI:
         if st.button("Inserir"):
             try:
                 View.inscricao_inserir(status)
-                st.sucess("Inscrição inserida com sucesso")
+                st.sucess("Inscrição inserida com sucesso!")
+            except 
