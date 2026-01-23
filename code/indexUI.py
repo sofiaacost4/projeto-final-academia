@@ -4,6 +4,7 @@ from templates.abrircontaUI import AbrirContaUI
 from templates.manteralunoUI import ManterAlunoUI
 from templates.manterinstrutorUI import ManterInstrutorUI
 from templates.manteresporteUI import ManterEsporteUI
+from templates.gerenciarpagamentoUI import GerenciarPagamentoUI
 from templates.perfilalunoUI import PerfilAlunoUI
 from templates.perfilinstrutorUI import PerfilInstrutorUI
 from models.dao_sql.dao import DAO
@@ -12,10 +13,11 @@ import streamlit as st
 
 class IndexUI:
     def menu_gestor():
-        op = st.sidebar.selectbox("Menu", ["Cadastro de Alunos", "Cadastro de Instrutores", "Cadastro de Esportes", "Cadastro de Aulas", "Cadastro de Inscrições", "Cadastro de Pagamentos"])
+        op = st.sidebar.selectbox("Menu", ["Cadastro de Alunos", "Cadastro de Instrutores", "Cadastro de Esportes", "Cadastro de Aulas", "Cadastro de Inscrições", "Gerenciamento de Pagamento"])
         if op == "Cadastro de Alunos": ManterAlunoUI.main()
         if op == "Cadastro de Instrutores": ManterInstrutorUI.main()
         if op == "Cadastro de Esportes": ManterEsporteUI.main()
+        if op == "Gerenciamento de Pagamentos": GerenciarPagamentoUI.main()
 
     def menu_visitante():
         st.title("GymTime")
@@ -24,8 +26,9 @@ class IndexUI:
         if op == "Abrir Conta": AbrirContaUI.main()
 
     def menu_aluno():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciamento de Pagamento"])
         if op == "Meus Dados": PerfilAlunoUI.main()
+        if op == "Gerenciamento de Pagamento": GerenciarPagamentoUI.main()
 
     def menu_instrutor():
         op = st.sidebar.selectbox("Menu", ["Meus Dados"])
