@@ -1,14 +1,13 @@
 from models.dao_sql.dao import DAO
-from models.dao_sql.database import Database
 from models.aula import Aula
 
 class AulaDAO(DAO):
     @classmethod
-    def abrir(cls, obj):
+    def inserir(cls, obj):
         cls.abrir()
         sql = """
             INSERT INTO aula (id_aluno, id_esporte, dia, confirmado, id_instrutor)
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?)
         """
         cls.execute(sql, (obj.get_id_aluno(), obj.get_id_esporte(), obj.get_dia(), obj.get_confirmado(), obj.get_id_instrutor()))
         cls.fechar()
@@ -19,7 +18,10 @@ class AulaDAO(DAO):
         sql = "SELECT id, id_aluno, id_esporte, dia, confirmado, id_instrutor FROM aula"
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
-        objs = [Aula(id, id_aluno, id_esporte, dia, confirmado, id_instrutor) for (id, id_esporte, dia, confirmado, id_instrutor) in rows]
+        objs = [
+            Aula(id, id_aluno, id_esporte, dia, confirmado, id_instrutor)
+            for (id, id_aluno, id_esporte, dia, confirmado, id_instrutor) in rows
+        ]
         cls.fechar()
         return objs
     
@@ -28,7 +30,7 @@ class AulaDAO(DAO):
         cls.abrir()
         sql = "SELECT id, id_aluno, id_esporte, dia, confirmado, id_instrutor FROM aula WHERE id = ?"
         cursor = cls.execute(sql, (id,))
-        rows = cursor.fetchone()
+        row = cursor.fetchone()
         obj = Aula(*row) if row else None
         cls.fechar()
         return obj

@@ -4,6 +4,8 @@ from templates.abrircontaUI import AbrirContaUI
 from templates.manteralunoUI import ManterAlunoUI
 from templates.manterinstrutorUI import ManterInstrutorUI
 from templates.manteresporteUI import ManterEsporteUI
+from templates.manteraulaUI import ManterAulaUI
+from templates.manterinscricaoUI import ManterInscricaoUI
 from templates.gerenciarpagamentoUI import GerenciarPagamentoUI
 from templates.perfilalunoUI import PerfilAlunoUI
 from templates.perfilinstrutorUI import PerfilInstrutorUI
@@ -17,6 +19,8 @@ class IndexUI:
         if op == "Cadastro de Alunos": ManterAlunoUI.main()
         if op == "Cadastro de Instrutores": ManterInstrutorUI.main()
         if op == "Cadastro de Esportes": ManterEsporteUI.main()
+        if op == "Cadastro de Aulas": ManterAulaUI.main()
+        if op == "Cadastro de Inscrições": ManterInscricaoUI.main()
         if op == "Gerenciamento de Pagamentos": GerenciarPagamentoUI.main()
 
     def menu_visitante():

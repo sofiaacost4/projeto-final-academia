@@ -3,7 +3,7 @@ class Pagamento:
         self.set_id(id)
         self.set_status(status)
         self.set_valor(valor)
-        self.id_inscricao(id_inscricao)
+        self.set_id_inscricao(id_inscricao)
 
     def get_id(self): return self.__id
     def get_status(self): return self.__status

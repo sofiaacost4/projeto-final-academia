@@ -78,12 +78,20 @@ class Database:
             );
         """)
 
-        # tabela Inscricao
         cls.execute("""
             CREATE TABLE IF NOT EXISTS inscricao (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_aluno INTEGER NOT NULL,
+                id_esporte INTEGER NOT NULL,
                 status TEXT NOT NULL,
-                data TEXT NOT NULL
+
+                FOREIGN KEY (id_aluno)
+                    REFERENCES aluno(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (id_esporte)
+                    REFERENCES esporte(id)
+                    ON DELETE CASCADE
             );
         """)
 

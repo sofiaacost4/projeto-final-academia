@@ -2,44 +2,48 @@ from models.dao_sql.dao import DAO
 from models.inscricao import Inscricao
 
 class InscricaoDAO(DAO):
+
     @classmethod
-    def abrir(cls, obj):
+    def inserir(cls, obj):
         cls.abrir()
         sql = """
-            INSERT INTO inscricao (status, data)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO inscricao (id_aluno, id_esporte, status)
+            VALUES (?, ?, ?)
         """
-        cls.execute(sql, (obj.get_status(), obj.get_data()))
+        cls.execute(sql, (
+            obj.get_id_aluno(),
+            obj.get_id_esporte(),
+            obj.get_status()
+        ))
         cls.fechar()
-    
+
     @classmethod
     def listar(cls):
         cls.abrir()
-        sql = "SELECT id, status, data FROM inscricao"
+        sql = "SELECT id, id_aluno, id_esporte, status FROM inscricao"
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
-        objs = [Inscricao(id, status, data) for (id, status, data) in rows]
+        objs = [
+            Inscricao(id, id_aluno, id_esporte, status)
+            for (id, id_aluno, id_esporte, status) in rows
+        ]
         cls.fechar()
         return objs
-    
+
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
-        sql = "SELECT id, status, data FROM inscricao WHERE id = ?"
+        sql = "SELECT id, id_aluno, id_esporte, status FROM inscricao WHERE id=?"
         cursor = cls.execute(sql, (id,))
-        rows = cursor.fetchone()
-        obj = Inscricao(*row) if row else None
+        row = cursor.fetchone()
         cls.fechar()
-        return obj
+        return Inscricao(*row) if row else None
 
     @classmethod
     def atualizar(cls, obj):
         cls.abrir()
-        sql = """
-            UPDATE inscricao SET status=?, data=?
-            WHERE id=?
-        """
-        cls.execute(sql, (obj.get_status, obj.get_data(), obj.get_id()))
+        sql = "UPDATE inscricao SET status=? WHERE id=?"
+        cls.execute(sql, (obj.get_status(), obj.get_id()))
         cls.fechar()
 
     @classmethod
