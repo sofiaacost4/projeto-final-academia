@@ -1,7 +1,7 @@
 from models.dao_sql.dao import DAO
 from models.instrutor import Instrutor
 
-class InstrutorDAO(DAO):
+class InstrutorDAO(DAO): 
 
     @classmethod
     def inserir(cls, obj):

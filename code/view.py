@@ -10,7 +10,6 @@ from models.dao_sql.esportedao import EsporteDAO
 from models.dao_sql.inscricaodao import InscricaoDAO
 
 class View:
-    
     def criar_gestor():
         for obj in View.aluno_listar():
             if obj.get_email() == "gestor":
@@ -171,18 +170,26 @@ class View:
     def aula_inserir(id_aluno, id_esporte, dia, confirmado, id_instrutor):
         for a in View.aula_listar():
             if a.get_dia() == dia and a.get_id_instrutor() == id_instrutor:
-                raise ValueError("Esse data já está cadastrada na agenda de um profissional.")
-        c = Aula(0, dia)
-        c.set_id_aluno(id_aluno)
-        c.set_confirmado(confirmado)
-        c.set_id_esporte(id_esporte)
-        c.set_id_instrutor(id_instrutor)
+                raise ValueError("Essa data já está cadastrada na agenda de um profissional.")
+
+        c = Aula(
+            0,              # id
+            id_aluno,
+            id_esporte,
+            dia,            # datetime
+            confirmado,
+            id_instrutor
+        )
+
         AulaDAO.inserir(c)
+
+
+
     def aula_atualizar(id, id_aluno, id_esporte, dia, confirmado, id_instrutor):
         for a in View.aula_listar():
             if a.get_id() != id and a.get_dia() == dia and a.get_id_instrutor() == id_instrutor: 
                 raise ValueError("Esse data já está cadastrada na agenda de um instrutor.")
-        c = Aula(id, dia)
+        c = Aula(id, dia) #  o erro acontece aqui
         c.set_id_aluno(id_aluno)
         c.set_confirmado(confirmado)
         c.set_id_esporte(id_esporte)

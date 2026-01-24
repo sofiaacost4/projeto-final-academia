@@ -29,7 +29,7 @@ class EsporteDAO(DAO):
         sql = "SELECT id, tipo FROM esporte WHERE id = ?"
         cursor = cls.execute(sql, (id,))
         rows = cursor.fetchone()
-        obj = Esporte(*row) if row else None
+        obj = Esporte(*rows) if rows else None
         cls.fechar()
         return obj
 

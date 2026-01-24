@@ -21,12 +21,23 @@ class Aula:
     def set_id_esporte(self, id_esporte): self.__id_esporte = id_esporte
     def set_confirmado(self, confirmado): self.__confirmado = confirmado
     def set_id_instrutor(self, id_instrutor): self.__id_instrutor = id_instrutor
-    def set_dia(self, dia): 
-        ano_atual = datetime.now().year
-        if dia.year < ano_atual:
-            raise ValueError(f'O ano deve ser no mínimo {ano_atual}.')
-        self.__dia = dia
-
+    def set_dia(self, dia):        
+        if isinstance(dia, datetime):
+            self.__dia = dia
+            return
+        if isinstance(dia, str):
+            try:
+                # formato da UI
+                self.__dia = datetime.strptime(dia, "%d/%m/%Y %H:%M")
+                return
+            except ValueError:
+                pass
+            try:
+                self.__dia = datetime.strptime(dia, "%Y-%m-%d %H:%M:%S")
+                return
+            except ValueError:
+                pass
+        raise ValueError("Formato de data/hora inválido para aula.")
     def to_dic(self):
         dic = {"id": self.__id, "id_aluno": self.__id_aluno, "id_esporte": self.__id_esporte, "dia": self.__dia, "confirmado": self.__confirmado, "id_instrutor": self.__id_instrutor}
         return dic
