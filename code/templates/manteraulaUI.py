@@ -90,6 +90,7 @@ class ManterAulaUI:
 
         if st.button("Inserir", key="btn_inserir_aula"):
             try:
+<<<<<<< HEAD
                 data = datetime.strptime(dia, "%d/%m/%Y %H:%M")
 
                 View.aula_inserir(
@@ -103,6 +104,16 @@ class ManterAulaUI:
                 st.success("Aula inserida com sucesso.")
                 time.sleep(2)
                 st.rerun()
+=======
+                id_aluno = None
+                id_esporte = None
+                id_instrutores = None
+                if aluno != None: id_aluno = aluno.get_id()
+                if esporte != None: id_esporte = esporte.get_id()
+                if instrutor != None: id_instrutores = instrutor.get_id()
+                View.aula_inserir(datetime.strptime(dia, "%d/%m/%Y %H:%M"), confirmado, id_aluno, id_esporte, id_instrutores)
+                st.success("Aula inserido com sucesso")
+>>>>>>> f6527be7acb956be2f80e1404809b3e88aabaaa5
             except ValueError as erro:
                 st.error(str(erro))
 

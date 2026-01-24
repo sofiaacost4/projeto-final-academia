@@ -9,6 +9,7 @@ from templates.manterinscricaoUI import ManterInscricaoUI
 from templates.gerenciarpagamentoUI import GerenciarPagamentoUI
 from templates.perfilalunoUI import PerfilAlunoUI
 from templates.perfilinstrutorUI import PerfilInstrutorUI
+from templates.inscricoesUI import InscricoesAlunoUI
 from models.dao_sql.dao import DAO
 
 import streamlit as st
@@ -30,9 +31,10 @@ class IndexUI:
         if op == "Abrir Conta": AbrirContaUI.main()
 
     def menu_aluno():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciamento de Pagamento"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciamento de Pagamento", "Inscrições"])
         if op == "Meus Dados": PerfilAlunoUI.main()
         if op == "Gerenciamento de Pagamento": GerenciarPagamentoUI.main()
+        if op == "Inscrições": InscricoesAlunoUI.main()
 
     def menu_instrutor():
         op = st.sidebar.selectbox("Menu", ["Meus Dados"])
