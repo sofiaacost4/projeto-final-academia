@@ -52,8 +52,8 @@ class ManterAulaUI:
                 id_instrutores = None
                 if aluno != None: id_aluno = aluno.get_id()
                 if esporte != None: id_esporte = esporte.get_id()
-                if instrutor != None: id_instrutor = instrutor.get_id()
-                View.aula_inserir(datetime.strptime(dia, "%d/%m/%Y %H:%M"), confirmado, id_aluno, id_esporte, id_instrutor)
+                if instrutor != None: id_instrutores = instrutor.get_id()
+                View.aula_inserir(datetime.strptime(dia, "%d/%m/%Y %H:%M"), confirmado, id_aluno, id_esporte, id_instrutores)
                 st.success("Aula inserido com sucesso")
             except ValueError as erro:
                 st.error(str(erro))
