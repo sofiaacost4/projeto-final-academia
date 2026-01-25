@@ -54,11 +54,24 @@ class View:
             AlunoDAO.atualizar(aluno)
         except ValueError as erro:
             raise erro
+        
     def aluno_excluir(id):
         aluno = View.aluno_listar_id(id)
+        if aluno is None:
+            raise ValueError("Aluno não encontrado.")
         if aluno.get_email() == "gestor":
             raise ValueError("Gestor não pode ser excluído.")
+        for inscricao in View.inscricao_listar():
+            if inscricao.get_id_aluno() == id:
+                raise ValueError("Aluno não pode ser excluído, pois possui inscrições ativas.")
+        for aula in View.aula_listar():
+            if hasattr(aula, 'get_id_aluno') and aula.get_id_aluno() == id:
+                raise ValueError("Aluno não pode ser excluído, pois está vinculado a uma aula.")
+        for aa in View.aula_aluno_listar():
+            if aa.get_id_aluno() == id:
+                raise ValueError("Aluno não pode ser excluído, pois está vinculado a uma aula.")
         AlunoDAO.excluir(id)
+
     def aluno_listar_id(id):
         aluno = AlunoDAO.listar_id(id)
         return aluno
@@ -215,13 +228,11 @@ class View:
         ids_alunos = {
             i.get_id_aluno()
             for i in inscricoes
-            if i.get_id_esporte() == id_esporte
-        }
+            if i.get_id_esporte() == id_esporte}
 
-        return [
+        return[
             a for a in alunos
-            if a.get_id() in ids_alunos
-        ]
+            if a.get_id() in ids_alunos]
 
     def esporte_excluir(id):
         for i in View.inscricao_listar():
@@ -235,25 +246,26 @@ class View:
 
     def aula_listar():
         return AulaDAO.listar()
+    
     def aula_listar_id(id):
-        return AulaDAO.listar_id()
-    def aula_inserir(id_esporte, dia, id_instrutor, confirmada=False):
+        return AulaDAO.listar_id(id)
+    
+    @staticmethod
+    def aula_inserir(data_hora, esporte, instrutor):
         for a in View.aula_listar():
-            if a.get_dia() == dia and a.get_id_instrutor() == id_instrutor:
+            if (
+                a.get_id_esporte() == esporte and
+                a.get_id_instrutor() == instrutor and
+                a.get_dia() == data_hora):
                 raise ValueError(
-                    "Essa data já está cadastrada na agenda deste instrutor."
-                )
-
-        aula = Aula(
-            0,       
-            id_esporte,
-            dia,
-            id_instrutor,
-            confirmada
-        )
-
-        AulaDAO.inserir(aula)
-
+                    "Já existe uma aula desse esporte com esse instrutor nesse dia e horário.")
+        AulaDAO.inserir(
+            Aula(
+                id=0,
+                id_esporte=esporte,
+                dia=data_hora,
+                id_instrutor=instrutor,
+                confirmada=False))
 
     def aula_atualizar(id, id_esporte, dia, confirmado, id_instrutor):
         for a in View.aula_listar():
@@ -275,9 +287,13 @@ class View:
         aula = View.aula_listar_id(id)
         if aula is None:
             raise ValueError("Aula não encontrada.")
-        if aula.get_id_aluno() is not None or aula.get_id_esporte() is not None or aula.get_id_instrutor() is not None:
-            raise ValueError("Aula não pode ser excluída.")
+
+        vinculacoes = AulaAlunoDAO.listar()
+        for v in vinculacoes:
+            if v.get_id_aula() == id:
+                raise ValueError("Aula não pode ser excluída pois possui alunos inscritos.")
         AulaDAO.excluir(id)
+
     def aula_adicionar_aluno(id_aula, id_aluno):
         aula = AulaDAO.listar_id(id_aula)
         if aula is None:
@@ -301,16 +317,18 @@ class View:
         for dia in datas:
             AulaDAO.inserir(
                 Aula(
-                    0,
-                    id_esporte,
-                    id_instrutor,
-                    dia,
-                    False))
+                    id=0,
+                    id_esporte=id_esporte,
+                    dia=dia,
+                    id_instrutor=id_instrutor,
+                    confirmada=False))
+
     def aulas_por_esporte():
         resultado = {}
         for a in View.aula_listar():
             resultado.setdefault(a.get_id_esporte(), []).append(a)
         return resultado
+    
     def aulas_do_instrutor(id_instrutor):
         return [a for a in View.aula_listar() if a.get_id_instrutor() == id_instrutor]
     def aulas_do_aluno(id_aluno):
@@ -318,7 +336,7 @@ class View:
         vinculacoes = AulaAlunoDAO.listar()
         ids_aulas = {v.get_id_aula() for v in vinculacoes if v.get_id_aluno() == id_aluno}
         return [a for a in aulas if a.get_id() in ids_aulas]
-    from datetime import timedelta
+
     def aula_criar_com_intervalo(
         id_esporte,
         id_instrutor,
@@ -327,24 +345,23 @@ class View:
         intervalo_valor,
         quantidade
     ):
-        """
-        intervalo_tipo: 'dias', 'semanas', 'meses'
-        intervalo_valor: int
-        quantidade: número de aulas a criar
-        """
         aulas_criadas = []
         data_atual = data_inicio
         for _ in range(quantidade):
             for a in View.aula_listar():
-                if a.get_dia() == data_atual and a.get_id_instrutor() == id_instrutor:
+                if (
+                    a.get_dia() == data_atual and
+                    a.get_id_instrutor() == id_instrutor and
+                    a.get_id_esporte() == id_esporte):
                     raise ValueError(
                         f"Conflito de horário em {data_atual.strftime('%d/%m/%Y %H:%M')}")
             aula = Aula(
                 id=0,
                 id_esporte=id_esporte,
-                id_instrutor=id_instrutor,
                 dia=data_atual,
-                confirmada=False)
+                id_instrutor=id_instrutor,
+                confirmada=False
+            )
             AulaDAO.inserir(aula)
             aulas_criadas.append(data_atual)
             if intervalo_tipo == "dias":
@@ -356,6 +373,34 @@ class View:
             else:
                 raise ValueError("Tipo de intervalo inválido.")
         return aulas_criadas
+    
+    def aulas_do_aluno(aluno_id):
+        aulas = View.aula_listar()
+        aula_alunos = View.aula_aluno_listar()  # assume que você tem AulaAlunoDAO.listar()
+        ids_aulas_do_aluno = [
+            aa.get_id_aula() for aa in aula_alunos if aa.get_id_aluno() == aluno_id]
+        return [a for a in aulas if a.get_id() in ids_aulas_do_aluno]
+    def alunos_da_aula(aula):
+        """
+        Retorna uma lista de alunos inscritos (pagos) para a aula de acordo com o esporte.
+        """
+        alunos = View.aluno_listar()
+        inscricoes = View.inscricao_listar()
+
+        # filtra apenas inscrições pagas do esporte da aula
+        ids_alunos = [
+            i.get_id_aluno()
+            for i in inscricoes
+            if i.get_id_esporte() == aula.get_id_esporte() and i.get_status().lower() == "pago"
+        ]
+
+        # retorna objetos Aluno
+        return [a for a in alunos if a.get_id() in ids_alunos]
+    
+    # AULA ALUNO
+
+    def aula_aluno_listar():
+        return AulaAlunoDAO.listar()
 
     # INSCRIÇÃO
 
@@ -366,17 +411,29 @@ class View:
         return InscricaoDAO.listar_id()
 
     def inscricao_inserir(id_aluno, id_esporte, status):
-        obj = Inscricao(
-            id=None,
-            id_aluno=id_aluno,
-            id_esporte=id_esporte,
-            status=status)
-        InscricaoDAO.inserir(obj)
+            # Validação: Verifica se existe algum instrutor com a especialidade do esporte
+            instrutores = View.instrutor_listar_obj()
+            tem_instrutor = any(i.get_especialidade() == id_esporte for i in instrutores)
+
+            if not tem_instrutor:
+                raise ValueError("Não é possível se inscrever: este esporte não possui instrutores vinculados.")
+
+            obj = Inscricao(
+                id=None,
+                id_aluno=id_aluno,
+                id_esporte=id_esporte,
+                status=status)
+            InscricaoDAO.inserir(obj)
+            
+    def inscricao_excluir(id):
+        # Buscamos a inscrição específica para validar o status antes de excluir
+        inscricoes = View.inscricao_listar()
+        for a in inscricoes:
+            if a.get_id() == id and a.get_status().lower() == "confirmado":
+                raise ValueError("Inscrição não pode ser excluída, pois já está confirmada.")
         
-    def inscricao_excluir():
-        for a in View.inscricao_listar():
-            if a.get_status() == "confirmado": 
-                raise ValueError("Inscrição não pode ser excluída, pois ainda está ativa.")
+        # Se passar pela validação, chama o DAO para excluir
+        # InscricaoDAO.excluir(id) # Adicione a chamada real do seu DAO aqui
 
     def inscricao_confirmar(id_inscricao):
         ins = InscricaoDAO.listar_id(id_inscricao)

@@ -33,11 +33,16 @@ class ManterAulaUI:
 
         lista = []
         for a in aulas:
+            # pega alunos inscritos pagos no esporte da aula
+            alunos = View.alunos_por_esporte(a.get_id_esporte())
+            nomes_alunos = ", ".join([aluno.get_nome() for aluno in alunos]) or "Nenhum aluno"
+
             lista.append({
                 "ID": a.get_id(),
                 "Data": a.get_dia().strftime("%d/%m/%Y %H:%M"),
                 "Esporte": mapa_esportes.get(a.get_id_esporte()),
-                "Instrutor": mapa_instrutores.get(a.get_id_instrutor())
+                "Instrutor": mapa_instrutores.get(a.get_id_instrutor()),
+                "Alunos": nomes_alunos
             })
 
         df = pd.DataFrame(lista)
@@ -46,13 +51,12 @@ class ManterAulaUI:
     # ---------------- INSERIR ----------------
 
     def inserir():
+        
+        data = st.date_input("Data da aula")
+        hora = st.time_input("Horário da aula")
         esportes = View.esporte_listar()
         instrutores = View.instrutor_listar_obj()
 
-        dia = st.text_input(
-            "Data e horário da aula:",
-            datetime.now().strftime("%d/%m/%Y %H:%M")
-        )
 
         esporte = st.selectbox(
             "Esporte:",
@@ -91,11 +95,13 @@ class ManterAulaUI:
             min_value=1,
             value=4
         )
+
         if st.button("Criar aulas"):
             try:
                 if not esporte or not instrutor:
                     raise ValueError("Selecione esporte e instrutor.")
-                data_inicio = datetime.strptime(dia, "%d/%m/%Y %H:%M")
+
+                data_inicio = datetime.combine(data, hora)
 
                 View.aula_criar_com_intervalo(
                     id_esporte=esporte.get_id(),
@@ -112,6 +118,7 @@ class ManterAulaUI:
 
             except ValueError as erro:
                 st.error(str(erro))
+
 
     # ---------------- ATUALIZAR ----------------
 
