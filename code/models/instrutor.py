@@ -22,8 +22,9 @@ class Instrutor:
           if email == "": raise ValueError("O email é obrigatório")
           self.__email = email
      def set_especialidade(self, especialidade):
-          if especialidade is None: raise ValueError("A especialidade é obrigatória")
-          self.__especialidade = especialidade
+          if especialidade is None:
+               raise ValueError("A especialidade é obrigatória")
+          self.__especialidade = int(especialidade)
      def set_fone(self, fone): self.__fone = fone
      def set_senha(self, senha): 
           if senha == "": raise ValueError("A senha é obrigatória")

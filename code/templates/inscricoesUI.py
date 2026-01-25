@@ -1,57 +1,43 @@
-# página de Inscrições (Perfil do Aluno) onde aparecerão as Inscrições (Esporte, Instrutor, botão Inscrever-se) para que ele possa se inscrever;
-    # ao inscrever-se, aquela aula automaticamente "some" da página e aparece na página Minhas Aulas
 import streamlit as st
 from view import View
-
 
 class InscricoesAlunoUI:
     def main():
         st.header("Inscrições")
-
         id_aluno = st.session_state["usuario_id"]
-        aulas = View.aula_listar()
-        inscricoes = View.inscricao_listar()
-
-        # esportes já inscritos pelo aluno
-        esportes_inscritos = {
-            i.get_id_esporte()
-            for i in inscricoes
-            if i.get_id_aluno() == id_aluno
-        }
-
-        # só aulas disponíveis
-        aulas_disponiveis = [
-            a for a in aulas
-            if a.get_id_esporte() not in esportes_inscritos
-        ]
-
-        if len(aulas_disponiveis) == 0:
-            st.info("Você já está inscrito em todas as aulas disponíveis.")
+        esportes_disponiveis = View.esportes_disponiveis_para_aluno(id_aluno)
+        if not esportes_disponiveis:
+            st.info("Você já está inscrito em todos os esportes disponíveis.")
             return
-
-        for aula in aulas_disponiveis:
-            InscricoesAlunoUI.card_aula(id_aluno, aula)
-
-    def card_aula(id_aluno, aula):
-        esporte = View.esporte_listar_id(aula.get_id_esporte())
-        instrutor = View.instrutor_listar_id(aula.get_id_instrutor())
-
+        for esporte in esportes_disponiveis:
+            InscricoesAlunoUI.card_esporte(id_aluno, esporte)
+    def card_esporte(id_aluno, esporte):
+        # Instrutores associados
+        instrutores = [
+            i.get_nome()
+            for i in View.instrutor_listar_obj()
+            if i.get_especialidade() == esporte.get_id()]
         with st.container(border=True):
-            st.subheader(esporte.get_tipo())
-            st.write(f"Instrutor: {instrutor.get_nome()}")
-            st.write(f"Dia: {aula.get_dia()}")
+            st.subheader(f"Esporte: {esporte.get_tipo()}")
+            
+            st.markdown("**Instrutor(es):**")
+            if instrutores:
+                for nome in instrutores:
+                    st.write(f"- {nome}")
+            else:
+                st.write("Nenhum instrutor associado.")
 
             if st.button(
                 "Inscrever-se",
-                key=f"inscrever_{aula.get_id()}"
+                key=f"inscrever_{esporte.get_id()}"
             ):
                 try:
                     View.inscricao_inserir(
                         id_aluno,
-                        aula.get_id_esporte(),
+                        esporte.get_id(),
                         "Pendente"
                     )
                     st.success("Inscrição realizada com sucesso!")
                     st.rerun()
                 except ValueError as e:
-                    st.error(str(e))      
+                    st.error(str(e))

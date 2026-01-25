@@ -21,99 +21,95 @@ class ManterAulaUI:
 
     def listar():
         aulas = View.aula_listar()
-        if len(aulas) == 0:
-            st.write("Nenhuma aula cadastrada.")
-        else:
-            alunos = View.aluno_listar()
-            esportes = View.esporte_listar()
-            instrutores = View.instrutor_listar_obj()
+        if not aulas:
+            st.info("Nenhuma aula cadastrada.")
+            return
 
-            mapa_alunos = {a.get_id(): a.get_nome() for a in alunos}
-            mapa_esportes = {e.get_id(): e.get_tipo() for e in esportes}
-            mapa_instrutores = {i.get_id(): i.get_nome() for i in instrutores}
+        esportes = View.esporte_listar()
+        instrutores = View.instrutor_listar_obj()
 
-            lista = []
-            for a in aulas:
-                dia = a.get_dia()
-                if isinstance(dia, datetime):
-                    dia = dia.strftime("%d/%m/%Y %H:%M")
-                lista.append({
-                    "id": a.get_id(),
-                    "dia": dia,
-                    "confirmado": a.get_confirmado(),
-                    "aluno": mapa_alunos.get(a.get_id_aluno()),
-                    "esporte": mapa_esportes.get(a.get_id_esporte()),
-                    "instrutor": mapa_instrutores.get(a.get_id_instrutor())
-                })
+        mapa_esportes = {e.get_id(): e.get_tipo() for e in esportes}
+        mapa_instrutores = {i.get_id(): i.get_nome() for i in instrutores}
 
-            df = pd.DataFrame(lista)
-            st.dataframe(df, hide_index=True)
+        lista = []
+        for a in aulas:
+            lista.append({
+                "ID": a.get_id(),
+                "Data": a.get_dia().strftime("%d/%m/%Y %H:%M"),
+                "Esporte": mapa_esportes.get(a.get_id_esporte()),
+                "Instrutor": mapa_instrutores.get(a.get_id_instrutor())
+            })
+
+        df = pd.DataFrame(lista)
+        st.dataframe(df, hide_index=True)
 
     # ---------------- INSERIR ----------------
 
     def inserir():
-        alunos = View.aluno_listar()
         esportes = View.esporte_listar()
         instrutores = View.instrutor_listar_obj()
 
         dia = st.text_input(
-            "Informe a data e horário da aula:",
-            datetime.now().strftime("%d/%m/%Y %H:%M"),
-            key="aula_dia_inserir"
-        )
-
-        confirmado = st.checkbox("Confirmado", key="aula_confirmado_inserir")
-
-        aluno = st.selectbox(
-            "Aluno:",
-            alunos,
-            format_func=lambda a: a.get_nome(),
-            index=None,
-            key="aula_aluno_inserir"
+            "Data e horário da aula:",
+            datetime.now().strftime("%d/%m/%Y %H:%M")
         )
 
         esporte = st.selectbox(
             "Esporte:",
             esportes,
             format_func=lambda e: e.get_tipo(),
-            index=None,
-            key="aula_esporte_inserir"
+            index=None
         )
 
-        instrutor = st.selectbox(
-            "Instrutor:",
-            instrutores,
-            format_func=lambda i: i.get_nome(),
-            index=None,
-            key="aula_instrutor_inserir"
+        instrutor = None
+
+        if esporte:
+            instrutores = View.instrutores_por_esporte(esporte.get_id())
+
+            if not instrutores:
+                st.warning("Nenhum instrutor cadastrado para este esporte.")
+                return
+
+            instrutor = st.selectbox(
+                "Instrutor:",
+                instrutores,
+                format_func=lambda i: i.get_nome()
+            )
+            intervalo_tipo = st.selectbox(
+                "Intervalo:",
+                ["dias", "semanas", "meses"]
+            )
+
+        intervalo_valor = st.number_input(
+            "Intervalo (quantidade):",
+            min_value=1,
+            value=1
         )
 
-        if st.button("Inserir", key="btn_inserir_aula"):
+        quantidade = st.number_input(
+            "Quantidade de aulas:",
+            min_value=1,
+            value=4
+        )
+        if st.button("Criar aulas"):
             try:
-<<<<<<< HEAD
-                data = datetime.strptime(dia, "%d/%m/%Y %H:%M")
+                if not esporte or not instrutor:
+                    raise ValueError("Selecione esporte e instrutor.")
+                data_inicio = datetime.strptime(dia, "%d/%m/%Y %H:%M")
 
-                View.aula_inserir(
-                    aluno.get_id() if aluno else None,
-                    esporte.get_id() if esporte else None,
-                    data,
-                    confirmado,
-                    instrutor.get_id() if instrutor else None
+                View.aula_criar_com_intervalo(
+                    id_esporte=esporte.get_id(),
+                    id_instrutor=instrutor.get_id(),
+                    data_inicio=data_inicio,
+                    intervalo_tipo=intervalo_tipo,
+                    intervalo_valor=intervalo_valor,
+                    quantidade=quantidade
                 )
 
-                st.success("Aula inserida com sucesso.")
-                time.sleep(2)
+                st.success(f"{quantidade} aulas criadas com sucesso!")
+                time.sleep(1)
                 st.rerun()
-=======
-                id_aluno = None
-                id_esporte = None
-                id_instrutores = None
-                if aluno != None: id_aluno = aluno.get_id()
-                if esporte != None: id_esporte = esporte.get_id()
-                if instrutor != None: id_instrutores = instrutor.get_id()
-                View.aula_inserir(datetime.strptime(dia, "%d/%m/%Y %H:%M"), confirmado, id_aluno, id_esporte, id_instrutores)
-                st.success("Aula inserido com sucesso")
->>>>>>> f6527be7acb956be2f80e1404809b3e88aabaaa5
+
             except ValueError as erro:
                 st.error(str(erro))
 
@@ -121,106 +117,78 @@ class ManterAulaUI:
 
     def atualizar():
         aulas = View.aula_listar()
-        if len(aulas) == 0:
-            st.write("Nenhuma aula cadastrada.")
-        else:
-            alunos = View.aluno_listar()
-            esportes = View.esporte_listar()
-            instrutores = View.instrutor_listar_obj()
+        if not aulas:
+            st.info("Nenhuma aula cadastrada.")
+            return
 
-            op = st.selectbox(
-                "Selecione a aula:",
-                aulas,
-                format_func=lambda a: f"{a.get_id()} - {a.get_dia().strftime('%d/%m %H:%M')}",
-                key="aula_atualizar_select"
-            )
+        esportes = View.esporte_listar()
+        instrutores = View.instrutor_listar_obj()
 
-            dia = st.text_input(
-                "Nova data e horário:",
-                op.get_dia().strftime("%d/%m/%Y %H:%M"),
-                key="aula_dia_atualizar"
-            )
+        op = st.selectbox(
+            "Selecione a aula:",
+            aulas,
+            format_func=lambda a: f"{a.get_id()} - {a.get_dia().strftime('%d/%m %H:%M')}",
+            key="atualizar_aula_select"
+        )
 
-            confirmado = st.checkbox(
-                "Confirmado",
-                op.get_confirmado(),
-                key="aula_confirmado_atualizar"
-            )
+        dia = st.text_input(
+            "Nova data:",
+            op.get_dia().strftime("%d/%m/%Y %H:%M")
+        )
 
-            aluno = st.selectbox(
-                "Novo aluno:",
-                alunos,
-                index=next(
-                    (i for i, a in enumerate(alunos)
-                     if a.get_id() == op.get_id_aluno()),
-                    None
-                ),
-                format_func=lambda a: a.get_nome(),
-                key="aula_aluno_atualizar"
-            )
+        esporte = st.selectbox(
+            "Novo esporte:",
+            esportes,
+            index=next(i for i, e in enumerate(esportes) if e.get_id() == op.get_id_esporte()),
+            format_func=lambda e: e.get_tipo(),
+            key="atualizar_esporte_select"
+        )
 
-            esporte = st.selectbox(
-                "Novo esporte:",
-                esportes,
-                index=next(
-                    (i for i, e in enumerate(esportes)
-                     if e.get_id() == op.get_id_esporte()),
-                    None
-                ),
-                format_func=lambda e: e.get_tipo(),
-                key="aula_esporte_atualizar"
-            )
+        instrutor = st.selectbox(
+            "Novo instrutor:",
+            instrutores,
+            index=next(i for i, ins in enumerate(instrutores) if ins.get_id() == op.get_id_instrutor()),
+            format_func=lambda i: i.get_nome(),
+            key="atualizar_instrutor_select"
+        )
 
-            instrutor = st.selectbox(
-                "Novo instrutor:",
-                instrutores,
-                index=next(
-                    (i for i, i2 in enumerate(instrutores)
-                     if i2.get_id() == op.get_id_instrutor()),
-                    None
-                ),
-                format_func=lambda i: i.get_nome(),
-                key="aula_instrutor_atualizar"
-            )
+        if st.button("Atualizar"):
+            try:
+                data = datetime.strptime(dia, "%d/%m/%Y %H:%M")
 
-            if st.button("Atualizar", key="btn_atualizar_aula"):
-                try:
-                    data = datetime.strptime(dia, "%d/%m/%Y %H:%M")
+                View.aula_atualizar(
+                    id=op.get_id(),
+                    dia=data,
+                    id_esporte=esporte.get_id(),
+                    id_instrutor=instrutor.get_id()
+                )
 
-                    View.aula_atualizar(
-                        op.get_id(),
-                        data,
-                        confirmado,
-                        aluno.get_id() if aluno else None,
-                        esporte.get_id() if esporte else None,
-                        instrutor.get_id() if instrutor else None
-                    )
+                st.success("Aula atualizada.")
+                time.sleep(1)
+                st.rerun()
 
-                    st.success("Aula atualizada com sucesso.")
-                    time.sleep(2)
-                    st.rerun()
-                except ValueError as erro:
-                    st.error(str(erro))
+            except ValueError as erro:
+                st.error(str(erro))
 
     # ---------------- EXCLUIR ----------------
 
     def excluir():
         aulas = View.aula_listar()
-        if len(aulas) == 0:
-            st.write("Nenhuma aula cadastrada.")
-        else:
-            op = st.selectbox(
-                "Selecione a aula:",
-                aulas,
-                format_func=lambda a: f"{a.get_id()} - {a.get_dia().strftime('%d/%m %H:%M')}",
-                key="aula_excluir_select"
-            )
+        if not aulas:
+            st.info("Nenhuma aula cadastrada.")
+            return
 
-            if st.button("Excluir", key="btn_excluir_aula"):
-                try:
-                    View.aula_excluir(op.get_id())
-                    st.success("Aula excluída com sucesso.")
-                    time.sleep(2)
-                    st.rerun()
-                except ValueError as erro:
-                    st.error(str(erro))
+        op = st.selectbox(
+            "Selecione a aula:",
+            aulas,
+            format_func=lambda a: f"{a.get_id()} - {a.get_dia().strftime('%d/%m %H:%M')}"
+        )
+
+        if st.button("Excluir"):
+            try:
+                View.aula_excluir(op.get_id())
+                st.success("Aula excluída.")
+                time.sleep(1)
+                st.rerun()
+            except ValueError as erro:
+                st.error(str(erro))

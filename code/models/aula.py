@@ -1,33 +1,41 @@
 from datetime import datetime
 
 class Aula:
-    def __init__(self, id, id_aluno, id_esporte, dia, confirmado, id_instrutor):
+    def __init__(self, id, id_esporte, id_instrutor, dia, confirmada=False):
         self.set_id(id)
-        self.set_id_aluno(id_aluno)
         self.set_id_esporte(id_esporte)
-        self.set_dia(dia)
-        self.set_confirmado(False)
         self.set_id_instrutor(id_instrutor)
-        
-    def get_id(self): return self.__id
-    def get_id_aluno(self): return self.__id_aluno
-    def get_id_esporte(self): return self.__id_esporte
-    def get_dia(self): return self.__dia
-    def get_confirmado(self): return self.__confirmado
-    def get_id_instrutor(self): return self.__id_instrutor
+        self.set_dia(dia)
+        self.set_confirmada(confirmada)
 
-    def set_id(self, id): self.__id = id
-    def set_id_aluno(self, id_aluno): self.__id_aluno = id_aluno
-    def set_id_esporte(self, id_esporte): self.__id_esporte = id_esporte
-    def set_confirmado(self, confirmado): self.__confirmado = confirmado
-    def set_id_instrutor(self, id_instrutor): self.__id_instrutor = id_instrutor
-    def set_dia(self, dia):        
+    def get_id(self): return self.__id
+    def get_id_esporte(self): return self.__id_esporte
+    def get_id_instrutor(self): return self.__id_instrutor
+    def get_dia(self): return self.__dia
+    def get_confirmada(self): return self.__confirmada
+
+    def set_id(self, id):
+        self.__id = id
+
+    def set_id_esporte(self, id_esporte):
+        if id_esporte is None:
+            raise ValueError("Esporte é obrigatório")
+        self.__id_esporte = id_esporte
+
+    def set_id_instrutor(self, id_instrutor):
+        if id_instrutor is None:
+            raise ValueError("Instrutor é obrigatório")
+        self.__id_instrutor = id_instrutor
+
+    def set_confirmada(self, confirmada):
+        self.__confirmada = confirmada
+
+    def set_dia(self, dia):
         if isinstance(dia, datetime):
             self.__dia = dia
             return
         if isinstance(dia, str):
             try:
-                # formato da UI
                 self.__dia = datetime.strptime(dia, "%d/%m/%Y %H:%M")
                 return
             except ValueError:
@@ -38,15 +46,25 @@ class Aula:
             except ValueError:
                 pass
         raise ValueError("Formato de data/hora inválido para aula.")
-    def to_dic(self):
-        dic = {"id": self.__id, "id_aluno": self.__id_aluno, "id_esporte": self.__id_esporte, "dia": self.__dia, "confirmado": self.__confirmado, "id_instrutor": self.__id_instrutor}
-        return dic
-    
-    @staticmethod
-    def from_dic(self):
-        return Aula(dic["id"], dic["id_aluno"], dic["id_esporte"], dic["dia"], dic["confirmado"], dic["id_instrutor"])
 
-    def  __str__(self): 
-        return f'{self.__id} - {self.__id_aluno} - {self.__id_esporte} - {self.__dia} - {self.__confirmado} - {self.__id_instrutor}'
-    
-    
+    def to_dic(self):
+        return {
+            "id": self.__id,
+            "id_esporte": self.__id_esporte,
+            "id_instrutor": self.__id_instrutor,
+            "dia": self.__dia.strftime("%Y-%m-%d %H:%M:%S"),
+            "confirmada": self.__confirmada}
+
+    @staticmethod
+    def from_dic(dic):
+        return Aula(
+            dic["id"],
+            dic["id_esporte"],
+            dic["id_instrutor"],
+            dic["dia"],
+            dic["confirmada"])
+    def __str__(self):
+        return (
+            f'{self.__id} | Esporte: {self.__id_esporte} | '
+            f'Instrutor: {self.__id_instrutor} | '
+            f'Data: {self.__dia} | Confirmada: {self.__confirmada}')

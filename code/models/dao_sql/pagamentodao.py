@@ -4,11 +4,11 @@ from models.pagamento import Pagamento
 
 class PagamentoDAO(DAO):
     @classmethod
-    def abrir(cls, obj):
+    def inserir(cls, obj):
         cls.abrir()
         sql = """
             INSERT INTO pagamento (status, valor, id_inscricao)
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?)
         """
         cls.execute(sql, (obj.get_status(), obj.get_valor(), obj.get_id_inscricao()))
         cls.fechar()

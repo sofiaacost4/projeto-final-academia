@@ -4,4 +4,4 @@ from view import View
 
 class MinhasAulasUI:
     def main():
-    pass
+        pass

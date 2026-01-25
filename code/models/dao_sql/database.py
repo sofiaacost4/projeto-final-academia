@@ -17,14 +17,16 @@ class Database:
         cls.conn.close()
 
     @classmethod
-    def execute(cls, sql, params = None):
+    def execute(cls, sql, params=None):
         cursor = cls.conn.cursor()
         cursor.execute(sql, params or [])
         cls.conn.commit()
-    
+        return cursor   # importante
+
     @classmethod
     def criar_tabelas(cls):
-        # tabela Aluno
+
+        # ---------------- ALUNO ----------------
         cls.execute("""
             CREATE TABLE IF NOT EXISTS aluno (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,49 +37,56 @@ class Database:
             );
         """)
 
-        # tabela Instrutor
+        # ---------------- INSTRUTOR ----------------
         cls.execute("""
             CREATE TABLE IF NOT EXISTS instrutor (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
                 email TEXT NOT NULL,
-                especialidade TEXT NOT NULL,
+                especialidade INTEGER NOT NULL,
                 fone TEXT,
-                senha TEXT NOT NULL
+                senha TEXT NOT NULL,
+
+                FOREIGN KEY (especialidade) REFERENCES esporte(id)
             );
         """)
 
-        # tabela Esporte
+        # ---------------- ESPORTE ----------------
         cls.execute("""
             CREATE TABLE IF NOT EXISTS esporte (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                tipo TEXT NOT NULL               
+                tipo TEXT NOT NULL,
+                valor REAL NOT NULL
             );
         """)
-        # tabela Aula
+
+        # ---------------- AULA ----------------
         cls.execute("""
             CREATE TABLE IF NOT EXISTS aula (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                id_aluno INTEGER NOT NULL,
                 id_esporte INTEGER NOT NULL,
                 dia TEXT NOT NULL,
-                confirmado INTEGER, 
+                confirmado INTEGER,
                 id_instrutor INTEGER NOT NULL,
 
-                FOREIGN KEY (id_aluno)
-                    REFERENCES aluno(id)
-                    ON DELETE CASCADE,
+                FOREIGN KEY (id_esporte) REFERENCES esporte(id),
+                FOREIGN KEY (id_instrutor) REFERENCES instrutor(id)
+            );
+        """)
+        # -------------- AULA_ALUNO ----------------
+        cls.execute("""
+            CREATE TABLE IF NOT EXISTS aula_aluno (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_aula INTEGER NOT NULL,
+                id_aluno INTEGER NOT NULL,
 
-                FOREIGN KEY (id_esporte)
-                    REFERENCES esporte(id)
-                    ON DELETE CASCADE,
-
-                FOREIGN KEY (id_instrutor)
-                    REFERENCES instrutor(id)
-                    ON DELETE CASCADE
+                FOREIGN KEY (id_aula) REFERENCES aula(id) ON DELETE CASCADE,
+                FOREIGN KEY (id_aluno) REFERENCES aluno(id) ON DELETE CASCADE,
+                UNIQUE (id_aula, id_aluno)
             );
         """)
 
+        # ---------------- INSCRIÇÃO ----------------
         cls.execute("""
             CREATE TABLE IF NOT EXISTS inscricao (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,25 +94,20 @@ class Database:
                 id_esporte INTEGER NOT NULL,
                 status TEXT NOT NULL,
 
-                FOREIGN KEY (id_aluno)
-                    REFERENCES aluno(id)
-                    ON DELETE CASCADE,
-
-                FOREIGN KEY (id_esporte)
-                    REFERENCES esporte(id)
-                    ON DELETE CASCADE
+                FOREIGN KEY (id_aluno) REFERENCES aluno(id),
+                FOREIGN KEY (id_esporte) REFERENCES esporte(id)
             );
         """)
 
-        # tabela Pagamento
+        # ---------------- PAGAMENTO ----------------
         cls.execute("""
             CREATE TABLE IF NOT EXISTS pagamento (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 status TEXT NOT NULL,
                 valor REAL NOT NULL,
-                id_inscricao INTEGER,
+                id_inscricao INTEGER NOT NULL,
 
-                FOREIGN KEY (id_inscricao) REFERENCES inscricao(id) ON DELETE CASCADE
+                FOREIGN KEY (id_inscricao) REFERENCES inscricao(id)
             );
         """)
 
@@ -111,6 +115,3 @@ if __name__ == "__main__":
     Database.abrir()
     Database.criar_tabelas()
     Database.fechar()
-
-        
-        

@@ -7,22 +7,29 @@ from templates.manteresporteUI import ManterEsporteUI
 from templates.manteraulaUI import ManterAulaUI
 from templates.manterinscricaoUI import ManterInscricaoUI
 from templates.gerenciarpagamentoUI import GerenciarPagamentoUI
+from templates.minhasaulasUI import MinhasAulasUI
+from templates.minhasaulasinstrutorUI import MinhasAulasInstrutorUI
+from templates.verturmasUI import VerTurmasUI
+from templates.verpagamentosUI import VerPagamentoUI
+from templates.verinscricoesUI import VerInscricoesUI
 from templates.perfilalunoUI import PerfilAlunoUI
 from templates.perfilinstrutorUI import PerfilInstrutorUI
 from templates.inscricoesUI import InscricoesAlunoUI
+from templates.cancelarinscricao import CancelarInscricaoUI
 from models.dao_sql.dao import DAO
 
 import streamlit as st
 
 class IndexUI:
     def menu_gestor():
-        op = st.sidebar.selectbox("Menu", ["Cadastro de Alunos", "Cadastro de Instrutores", "Cadastro de Esportes", "Cadastro de Aulas", "Cadastro de Inscrições", "Gerenciamento de Pagamento"])
+        op = st.sidebar.selectbox("Menu", ["Cadastro de Alunos", "Cadastro de Instrutores", "Cadastro de Esportes", "Cadastro de Aulas", "Cadastro de Inscrições", "Ver Pagamentos", "Ver Turmas"])
         if op == "Cadastro de Alunos": ManterAlunoUI.main()
         if op == "Cadastro de Instrutores": ManterInstrutorUI.main()
         if op == "Cadastro de Esportes": ManterEsporteUI.main()
         if op == "Cadastro de Aulas": ManterAulaUI.main()
         if op == "Cadastro de Inscrições": ManterInscricaoUI.main()
-        if op == "Gerenciamento de Pagamentos": GerenciarPagamentoUI.main()
+        if op == "Ver Pagamentos": VerPagamentoUI.main()
+        if op == "Ver Turmas": VerTurmasUI.main()
 
     def menu_visitante():
         st.title("GymTime")
@@ -31,14 +38,18 @@ class IndexUI:
         if op == "Abrir Conta": AbrirContaUI.main()
 
     def menu_aluno():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciamento de Pagamento", "Inscrições"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciamento de Pagamento", "Inscrições", "Ver minhas aulas", "Ver minhas inscrições", "Cancelar inscrições"])
         if op == "Meus Dados": PerfilAlunoUI.main()
         if op == "Gerenciamento de Pagamento": GerenciarPagamentoUI.main()
         if op == "Inscrições": InscricoesAlunoUI.main()
+        if op == "Ver minhas aulas": MinhasAulasUI.main()
+        if op == "Ver minhas inscrições": VerInscricoesUI.main()
+        if op == "Cancelar inscrições": CancelarInscricaoUI.main()
 
     def menu_instrutor():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Ver minhas aulas"])
         if op == "Meus Dados": PerfilInstrutorUI.main()
+        if op == "Ver minhas aulas": MinhasAulasInstrutorUI.main()
 
     def sidebar():
         if "usuario_nome" not in st.session_state: 

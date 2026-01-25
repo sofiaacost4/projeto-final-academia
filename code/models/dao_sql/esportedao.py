@@ -1,35 +1,35 @@
-
 from models.dao_sql.dao import DAO
 from models.esporte import Esporte
 
 class EsporteDAO(DAO):
+
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
         sql = """
-            INSERT INTO esporte (tipo)
-            VALUES (?)
+            INSERT INTO esporte (tipo, valor)
+            VALUES (?, ?)
         """
-        cls.execute(sql, (obj.get_tipo(),))
+        cls.execute(sql, (obj.get_tipo(), obj.get_valor()))
         cls.fechar()
-    
+
     @classmethod
     def listar(cls):
         cls.abrir()
-        sql = "SELECT id, tipo FROM esporte"
+        sql = "SELECT id, tipo, valor FROM esporte"
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
-        objs = [Esporte(id, tipo) for (id, tipo) in rows]
+        objs = [Esporte(id, tipo, valor) for (id, tipo, valor) in rows]
         cls.fechar()
         return objs
-    
+
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
-        sql = "SELECT id, tipo FROM esporte WHERE id = ?"
+        sql = "SELECT id, tipo, valor FROM esporte WHERE id = ?"
         cursor = cls.execute(sql, (id,))
-        rows = cursor.fetchone()
-        obj = Esporte(*rows) if rows else None
+        row = cursor.fetchone()
+        obj = Esporte(*row) if row else None
         cls.fechar()
         return obj
 
@@ -37,15 +37,20 @@ class EsporteDAO(DAO):
     def atualizar(cls, obj):
         cls.abrir()
         sql = """
-            UPDATE esporte SET tipo=?
-            WHERE id=?
+            UPDATE esporte 
+            SET tipo = ?, valor = ?
+            WHERE id = ?
         """
-        cls.execute(sql, (obj.get_tipo(), obj.get_id()))
+        cls.execute(sql, (
+            obj.get_tipo(),
+            obj.get_valor(),
+            obj.get_id()
+        ))
         cls.fechar()
 
     @classmethod
     def excluir(cls, obj):
         cls.abrir()
-        sql = "DELETE FROM esporte WHERE id=?"
+        sql = "DELETE FROM esporte WHERE id = ?"
         cls.execute(sql, (obj.get_id(),))
         cls.fechar()
