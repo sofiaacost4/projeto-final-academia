@@ -10,13 +10,15 @@ class AulaDAO(DAO):
             INSERT INTO aula (id_esporte, id_instrutor, dia, confirmado)
             VALUES (?, ?, ?, ?)
         """
-        cls.execute(sql, (
+        cursor = cls.execute(sql, (
             obj.get_id_esporte(),
             obj.get_id_instrutor(),
             obj.get_dia().strftime("%Y-%m-%d %H:%M:%S"),
             int(obj.get_confirmada())
         ))
+        id_gerado = cursor.lastrowid
         cls.fechar()
+        return id_gerado 
 
     @classmethod
     def listar(cls):

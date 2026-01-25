@@ -47,8 +47,8 @@ class InscricaoDAO(DAO):
         cls.fechar()
 
     @classmethod
-    def excluir(cls, obj):
+    def excluir(cls, id_inscricao):
         cls.abrir()
-        sql = "DELETE FROM inscricao WHERE id=?"
-        cls.execute(sql, (obj.get_id(),))
+        sql = "DELETE FROM inscricao WHERE id = ?"
+        cls.execute(sql, (int(id_inscricao),))
         cls.fechar()

@@ -8,48 +8,40 @@ class CancelarInscricaoUI:
         st.header("Minhas inscrições")
 
         id_aluno_logado = st.session_state.get("usuario_id")
-
         inscricoes = [
             i for i in View.inscricao_listar()
-            if i.get_id_aluno() == id_aluno_logado
-        ]
-
+            if i.get_id_aluno() == id_aluno_logado and 
+            i.get_status().lower() not in ["pago", "confirmado"]]
         if not inscricoes:
-            st.write("Você não possui inscrições para cancelar.")
+            st.info("Você não possui inscrições pendentes para cancelar.")
+            st.caption("Inscrições confirmadas não podem ser canceladas por aqui.")
             return
-
         dados = []
         for i in inscricoes:
             esporte = View.esporte_listar_id(i.get_id_esporte())
             dados.append({
                 "id": i.get_id(),
-                "esporte": esporte.get_tipo() if esporte else "Desconhecido"
+                "Esporte": esporte.get_tipo() if esporte else "Desconhecido",
+                "Status Atual": i.get_status()
             })
 
         df = pd.DataFrame(dados)
-
-        df["Display"] = df["esporte"]
-
         st.dataframe(
-            df[["esporte"]],
+            df[["Esporte", "Status Atual"]],
             use_container_width=True,
-            hide_index=True
-        )
-
+            hide_index=True)
         inscricao_escolhida = st.selectbox(
-            "Selecione a inscrição para cancelar",
-            df["Display"].tolist()
-        )
+            "Selecione o esporte para desistir da inscrição",
+            df["Esporte"].tolist())
+        id_cancelar = df[df["Esporte"] == inscricao_escolhida]["id"].iloc[0]
 
-        id_cancelar = df[df["Display"] == inscricao_escolhida]["id"].iloc[0]
+        st.warning("Ao cancelar, sua solicitação será removida e o esporte no qual a inscrição está vinculada voltará para a lista inscrições.")
 
-        st.warning("Esta ação não pode ser desfeita.")
-
-        if st.button("Cancelar inscrição", type="primary"):
+        if st.button("Confirmar Cancelamento", type="primary"):
             try:
                 View.inscricao_excluir(id_cancelar)
-                st.success("Inscrição cancelada com sucesso.")
-                time.sleep(1.5)
+                st.success(f"Inscrição em {inscricao_escolhida} cancelada com sucesso!")
+                time.sleep(1)
                 st.rerun()
             except ValueError as erro:
                 st.error(str(erro))

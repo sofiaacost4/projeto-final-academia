@@ -304,7 +304,7 @@ class View:
                 i for i in View.inscricao_listar()
                 if i.get_id_aluno() == id_aluno
                 and i.get_id_esporte() == aula.get_id_esporte()
-                and i.get_status() == "Pago"
+                and i.get_status() == "Confirmado"
             ),
             None
         )
@@ -337,43 +337,72 @@ class View:
         ids_aulas = {v.get_id_aula() for v in vinculacoes if v.get_id_aluno() == id_aluno}
         return [a for a in aulas if a.get_id() in ids_aulas]
 
-    def aula_criar_com_intervalo(
-        id_esporte,
-        id_instrutor,
-        data_inicio,
-        intervalo_tipo,
-        intervalo_valor,
-        quantidade
-    ):
-        aulas_criadas = []
+    @staticmethod
+    def aluno_tem_conflito_horario(id_aluno, data_hora_aula):
+        """
+        Verifica conflito real: Mesmo DIA e mesmo HORÁRIO.
+        """
+        # 1. Obter todos os vínculos e aulas
+        vinculos = View.aula_aluno_listar()
+        aulas = View.aula_listar()
+        
+        # 2. Filtrar apenas os IDs das aulas que o aluno já tem
+        ids_aulas_aluno = [v.get_id_aula() for v in vinculos if v.get_id_aluno() == id_aluno]
+        
+        # 3. Comparação rigorosa
+        for aula in aulas:
+            if aula.get_id() in ids_aulas_aluno:
+                # Convertemos ambos para string formatada para garantir que a comparação 
+                # inclua o DIA e a HORA exatamente iguais.
+                data_existente = aula.get_dia().strftime("%Y-%m-%d %H:%M")
+                data_nova = data_hora_aula.strftime("%Y-%m-%d %H:%M")
+                
+                if data_existente == data_nova:
+                    return True
+        return False
+
+    @staticmethod
+    def aula_criar_com_intervalo(id_esporte, id_instrutor, data_inicio, intervalo_tipo, intervalo_valor, quantidade):
         data_atual = data_inicio
+        alunos_aptos = View.alunos_por_esporte(id_esporte)
+        
         for _ in range(quantidade):
-            for a in View.aula_listar():
-                if (
-                    a.get_dia() == data_atual and
-                    a.get_id_instrutor() == id_instrutor and
-                    a.get_id_esporte() == id_esporte):
-                    raise ValueError(
-                        f"Conflito de horário em {data_atual.strftime('%d/%m/%Y %H:%M')}")
-            aula = Aula(
-                id=0,
-                id_esporte=id_esporte,
-                dia=data_atual,
-                id_instrutor=id_instrutor,
-                confirmada=False
+            aulas_existentes = View.aula_listar()
+            data_formatada = data_atual.strftime('%d/%m/%Y às %H:%M')
+
+            # 1. TRAVA DE INSTRUTOR
+            conflito_instrutor = any(
+                a.get_id_instrutor() == id_instrutor and a.get_dia() == data_atual 
+                for a in aulas_existentes
             )
-            AulaDAO.inserir(aula)
-            aulas_criadas.append(data_atual)
-            if intervalo_tipo == "dias":
-                data_atual += timedelta(days=intervalo_valor)
-            elif intervalo_tipo == "semanas":
-                data_atual += timedelta(weeks=intervalo_valor)
-            elif intervalo_tipo == "meses":
-                data_atual += timedelta(days=30 * intervalo_valor)
-            else:
-                raise ValueError("Tipo de intervalo inválido.")
-        return aulas_criadas
-    
+            if conflito_instrutor:
+                raise ValueError(f"Erro: O instrutor já possui uma aula em {data_formatada}!")
+
+            # 2. TRAVA DE ALUNOS (QUALQUER ALUNO COM CONFLITO)
+            for aluno in alunos_aptos:
+                if View.aluno_tem_conflito_horario(aluno.get_id(), data_atual):
+                    raise ValueError(f"Erro: O aluno(a) {aluno.get_nome()} já tem aula em {data_formatada}!")
+
+            # 3. TRAVA DE AULA DUPLICADA (MESMO ESPORTE/HORA)
+            ja_existe_aula = any(
+                a.get_id_esporte() == id_esporte and a.get_dia() == data_atual 
+                for a in aulas_existentes
+            )
+            if ja_existe_aula:
+                raise ValueError(f"Erro: Já existe uma aula de {id_esporte} em {data_formatada}!")
+
+            # Se passou por todas as travas acima, aí sim cria a aula e vincula todos
+            id_aula_gerado = AulaDAO.inserir(Aula(0, id_esporte, data_atual, id_instrutor, False))
+            
+            if id_aula_gerado:
+                for aluno in alunos_aptos:
+                    AulaAlunoDAO.inserir(AulaAluno(None, id_aula_gerado, aluno.get_id()))
+
+            # Incremento da data para a próxima aula do lote
+            if intervalo_tipo == "dias": data_atual += timedelta(days=intervalo_valor)
+            elif intervalo_tipo == "semanas": data_atual += timedelta(weeks=intervalo_valor)
+            elif intervalo_tipo == "meses": data_atual += timedelta(days=30 * intervalo_valor)
+
     def aulas_do_aluno(aluno_id):
         aulas = View.aula_listar()
         aula_alunos = View.aula_aluno_listar()  # assume que você tem AulaAlunoDAO.listar()
@@ -381,21 +410,16 @@ class View:
             aa.get_id_aula() for aa in aula_alunos if aa.get_id_aluno() == aluno_id]
         return [a for a in aulas if a.get_id() in ids_aulas_do_aluno]
     def alunos_da_aula(aula):
-        """
-        Retorna uma lista de alunos inscritos (pagos) para a aula de acordo com o esporte.
-        """
-        alunos = View.aluno_listar()
-        inscricoes = View.inscricao_listar()
-
-        # filtra apenas inscrições pagas do esporte da aula
-        ids_alunos = [
-            i.get_id_aluno()
-            for i in inscricoes
-            if i.get_id_esporte() == aula.get_id_esporte() and i.get_status().lower() == "pago"
-        ]
-
-        # retorna objetos Aluno
-        return [a for a in alunos if a.get_id() in ids_alunos]
+        # 1. Pega todos os vínculos (ponte aluno-aula)
+        vinculacoes = AulaAlunoDAO.listar()
+        # 2. Pega todos os alunos cadastrados
+        todos_alunos = View.aluno_listar()
+        
+        # 3. Filtra apenas os IDs dos alunos que estão vinculados a ESTA aula específica
+        ids_alunos_na_aula = [v.get_id_aluno() for v in vinculacoes if v.get_id_aula() == aula.get_id()]
+        
+        # 4. Retorna a lista de objetos Aluno
+        return [a for a in todos_alunos if a.get_id() in ids_alunos_na_aula]
     
     # AULA ALUNO
 
@@ -426,14 +450,14 @@ class View:
             InscricaoDAO.inserir(obj)
             
     def inscricao_excluir(id):
-        # Buscamos a inscrição específica para validar o status antes de excluir
-        inscricoes = View.inscricao_listar()
-        for a in inscricoes:
-            if a.get_id() == id and a.get_status().lower() == "confirmado":
-                raise ValueError("Inscrição não pode ser excluída, pois já está confirmada.")
-        
-        # Se passar pela validação, chama o DAO para excluir
-        # InscricaoDAO.excluir(id) # Adicione a chamada real do seu DAO aqui
+            inscricoes = View.inscricao_listar()
+            inscricao = next((i for i in inscricoes if i.get_id() == id), None)
+            if not inscricao:
+                raise ValueError("Inscrição não encontrada.")
+            status_atual = inscricao.get_status().lower()
+            if status_atual in ["pago", "confirmado"]:
+                raise ValueError(f"Não é possível cancelar uma inscrição com status '{inscricao.get_status()}'.")
+            InscricaoDAO.excluir(id)
 
     def inscricao_confirmar(id_inscricao):
         ins = InscricaoDAO.listar_id(id_inscricao)
@@ -477,3 +501,17 @@ class View:
         if p is None:
             raise ValueError("Pagamento não encontrado.")
         PagamentoDAO.excluir(id)
+
+    @staticmethod
+    def sincronizar_vinculos_existentes():
+        inscricoes = View.inscricao_listar()
+        aulas = View.aula_listar()
+        vinculos_atuais = View.aula_aluno_listar()
+        for aula in aulas:
+            for ins in inscricoes:
+                if ins.get_id_esporte() == aula.get_id_esporte() and ins.get_status() == "Confirmado":
+                    ja_vinculado = any(v.get_id_aula() == aula.get_id() and 
+                                       v.get_id_aluno() == ins.get_id_aluno() 
+                                       for v in vinculos_atuais)
+                    if not ja_vinculado and not View.aluno_tem_conflito_horario(ins.get_id_aluno(), aula.get_dia()):
+                        AulaAlunoDAO.inserir(AulaAluno(None, aula.get_id(), ins.get_id_aluno()))

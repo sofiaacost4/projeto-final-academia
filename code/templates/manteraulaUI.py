@@ -20,33 +20,34 @@ class ManterAulaUI:
     # ---------------- LISTAR ----------------
 
     def listar():
-        aulas = View.aula_listar()
-        if not aulas:
-            st.info("Nenhuma aula cadastrada.")
-            return
+            aulas = View.aula_listar()
+            if not aulas:
+                st.info("Nenhuma aula cadastrada.")
+                return
 
-        esportes = View.esporte_listar()
-        instrutores = View.instrutor_listar_obj()
+            # Busca dados para criar os mapas de nomes
+            esportes = View.esporte_listar()
+            instrutores = View.instrutor_listar_obj()
 
-        mapa_esportes = {e.get_id(): e.get_tipo() for e in esportes}
-        mapa_instrutores = {i.get_id(): i.get_nome() for i in instrutores}
+            # Criação dos mapas locais para converter IDs em Nomes
+            mapa_esportes = {e.get_id(): e.get_tipo() for e in esportes}
+            mapa_instrutores = {i.get_id(): i.get_nome() for i in instrutores}
 
-        lista = []
-        for a in aulas:
-            # pega alunos inscritos pagos no esporte da aula
-            alunos = View.alunos_por_esporte(a.get_id_esporte())
-            nomes_alunos = ", ".join([aluno.get_nome() for aluno in alunos]) or "Nenhum aluno"
+            lista = []
+            for a in aulas:
+                alunos_da_aula = View.alunos_da_aula(a) 
+                nomes_alunos = ", ".join([aluno.get_nome() for aluno in alunos_da_aula]) or "Vazia"
 
-            lista.append({
-                "ID": a.get_id(),
-                "Data": a.get_dia().strftime("%d/%m/%Y %H:%M"),
-                "Esporte": mapa_esportes.get(a.get_id_esporte()),
-                "Instrutor": mapa_instrutores.get(a.get_id_instrutor()),
-                "Alunos": nomes_alunos
-            })
+                lista.append({
+                    "ID": a.get_id(),
+                    "Data": a.get_dia().strftime("%d/%m/%Y %H:%M"),
+                    "Esporte": mapa_esportes.get(a.get_id_esporte(), "Desconhecido"),
+                    "Instrutor": mapa_instrutores.get(a.get_id_instrutor(), "Desconhecido"),
+                    "Alunos": nomes_alunos
+                })
 
-        df = pd.DataFrame(lista)
-        st.dataframe(df, hide_index=True)
+            df = pd.DataFrame(lista)
+            st.dataframe(df, hide_index=True, use_container_width=True)
 
     # ---------------- INSERIR ----------------
 
