@@ -7,7 +7,7 @@ class ManterInscricaoUI:
 
     def main():
         st.header("Cadastro de Inscrições")
-        tab1, tab2, tab3, tab4 = st.tabs(["Listar", "Inserir", "Atualizar", "Excluir"])
+        tab1, tab2, tab3 = st.tabs(["Listar", "Inserir", "Excluir"])
         with tab1: ManterInscricaoUI.listar()
         with tab2: ManterInscricaoUI.inserir()
         with tab3: ManterInscricaoUI.excluir()
@@ -18,15 +18,16 @@ class ManterInscricaoUI:
             st.write("Não há nenhuma inscrição cadastrada ainda.")
         else:
             alunos = View.aluno_listar()
+            esportes = View.esporte_listar()
 
             mapa_alunos = {a.get_id(): a.get_nome() for a in alunos}
-            # para aparecer o nome do aluno no listar
+            mapa_esportes = {e.get_id(): e.get_tipo() for e in esportes}
             dados = []
             for i in inscricoes:
                 dados.append({
                     "id": i.get_id(),
                     "aluno": mapa_alunos.get(i.get_id_aluno()),
-                    "esporte": i.get_id_esporte(),
+                    "esporte": mapa_esportes.get(i.get_id_esporte()),
                     "status": i.get_status()
                 })
             df = pd.DataFrame(dados)
@@ -36,8 +37,13 @@ class ManterInscricaoUI:
         alunos = View.aluno_listar()
         esportes = View.esporte_listar()
 
-        aluno = st.selectbox("Aluno", alunos, key="inscricao_aluno")
-        esporte = st.selectbox("Esporte", esportes, key='inscricao_esporte')
+        aluno = st.selectbox("Aluno", alunos, 
+                             format_func=lambda a: a.get_nome(), 
+                             key="inscricao_aluno")
+        
+        esporte = st.selectbox("Esporte", esportes, 
+                               format_func=lambda e: e.get_tipo(), 
+                               key='inscricao_esporte')
 
         if st.button("Inscrever"):
             try:
@@ -46,7 +52,9 @@ class ManterInscricaoUI:
                     esporte.get_id(),
                     "Pendente"
                 )
-                st.success("Inscrição realizada! Aguardando pagamento.")
+                st.success(f"Inscrição de {aluno.get_nome()} em {esporte.get_tipo()} realizada! O aluno deve confirmar no perfil.")
+                time.sleep(1)
+                st.rerun()
             except ValueError as e:
                 st.error(str(e))
 

@@ -244,9 +244,11 @@ class View:
 
     # AULA
 
+    @staticmethod
     def aula_listar():
         return AulaDAO.listar()
     
+    @staticmethod
     def aula_listar_id(id):
         return AulaDAO.listar_id(id)
     
@@ -259,15 +261,17 @@ class View:
                 a.get_dia() == data_hora):
                 raise ValueError(
                     "Já existe uma aula desse esporte com esse instrutor nesse dia e horário.")
+        # Removido confirmada=False
         AulaDAO.inserir(
             Aula(
                 id=0,
                 id_esporte=esporte,
                 dia=data_hora,
-                id_instrutor=instrutor,
-                confirmada=False))
+                id_instrutor=instrutor))
 
-    def aula_atualizar(id, id_esporte, dia, confirmado, id_instrutor):
+    @staticmethod
+    def aula_atualizar(id, id_esporte, dia, id_instrutor):
+        # Removido parâmetro 'confirmado'
         for a in View.aula_listar():
             if (
                 a.get_id() != id and
@@ -275,14 +279,16 @@ class View:
                 a.get_id_instrutor() == id_instrutor):
                 raise ValueError(
                     "Essa data já está cadastrada na agenda deste instrutor.")
+        
+        # Objeto Aula criado sem o atributo de confirmação
         aula = Aula(
-            id,
-            id_esporte,
-            dia,
-            confirmado,
-            id_instrutor)
+            id=id,
+            id_esporte=id_esporte,
+            dia=dia,
+            id_instrutor=id_instrutor)
         AulaDAO.atualizar(aula)
 
+    @staticmethod
     def aula_excluir(id):
         aula = View.aula_listar_id(id)
         if aula is None:
@@ -294,6 +300,7 @@ class View:
                 raise ValueError("Aula não pode ser excluída pois possui alunos inscritos.")
         AulaDAO.excluir(id)
 
+    @staticmethod
     def aula_adicionar_aluno(id_aula, id_aluno):
         aula = AulaDAO.listar_id(id_aula)
         if aula is None:
@@ -313,47 +320,38 @@ class View:
             raise ValueError("Aluno não possui inscrição paga neste esporte.")
 
         AulaAlunoDAO.inserir(AulaAluno(None, id_aula, id_aluno))
+
+    @staticmethod
     def criar_aulas_em_lote(id_esporte, id_instrutor, datas):
         for dia in datas:
+            # Removido confirmada=False
             AulaDAO.inserir(
                 Aula(
                     id=0,
                     id_esporte=id_esporte,
                     dia=dia,
-                    id_instrutor=id_instrutor,
-                    confirmada=False))
+                    id_instrutor=id_instrutor))
 
+    @staticmethod
     def aulas_por_esporte():
         resultado = {}
         for a in View.aula_listar():
             resultado.setdefault(a.get_id_esporte(), []).append(a)
         return resultado
     
+    @staticmethod
     def aulas_do_instrutor(id_instrutor):
         return [a for a in View.aula_listar() if a.get_id_instrutor() == id_instrutor]
-    def aulas_do_aluno(id_aluno):
-        aulas = View.aula_listar()
-        vinculacoes = AulaAlunoDAO.listar()
-        ids_aulas = {v.get_id_aula() for v in vinculacoes if v.get_id_aluno() == id_aluno}
-        return [a for a in aulas if a.get_id() in ids_aulas]
 
     @staticmethod
     def aluno_tem_conflito_horario(id_aluno, data_hora_aula):
-        """
-        Verifica conflito real: Mesmo DIA e mesmo HORÁRIO.
-        """
-        # 1. Obter todos os vínculos e aulas
         vinculos = View.aula_aluno_listar()
         aulas = View.aula_listar()
         
-        # 2. Filtrar apenas os IDs das aulas que o aluno já tem
         ids_aulas_aluno = [v.get_id_aula() for v in vinculos if v.get_id_aluno() == id_aluno]
         
-        # 3. Comparação rigorosa
         for aula in aulas:
             if aula.get_id() in ids_aulas_aluno:
-                # Convertemos ambos para string formatada para garantir que a comparação 
-                # inclua o DIA e a HORA exatamente iguais.
                 data_existente = aula.get_dia().strftime("%Y-%m-%d %H:%M")
                 data_nova = data_hora_aula.strftime("%Y-%m-%d %H:%M")
                 
@@ -370,7 +368,6 @@ class View:
             aulas_existentes = View.aula_listar()
             data_formatada = data_atual.strftime('%d/%m/%Y às %H:%M')
 
-            # 1. TRAVA DE INSTRUTOR
             conflito_instrutor = any(
                 a.get_id_instrutor() == id_instrutor and a.get_dia() == data_atual 
                 for a in aulas_existentes
@@ -378,56 +375,49 @@ class View:
             if conflito_instrutor:
                 raise ValueError(f"Erro: O instrutor já possui uma aula em {data_formatada}!")
 
-            # 2. TRAVA DE ALUNOS (QUALQUER ALUNO COM CONFLITO)
             for aluno in alunos_aptos:
                 if View.aluno_tem_conflito_horario(aluno.get_id(), data_atual):
                     raise ValueError(f"Erro: O aluno(a) {aluno.get_nome()} já tem aula em {data_formatada}!")
 
-            # 3. TRAVA DE AULA DUPLICADA (MESMO ESPORTE/HORA)
             ja_existe_aula = any(
                 a.get_id_esporte() == id_esporte and a.get_dia() == data_atual 
                 for a in aulas_existentes
             )
             if ja_existe_aula:
-                raise ValueError(f"Erro: Já existe uma aula de {id_esporte} em {data_formatada}!")
+                raise ValueError(f"Erro: Já existe uma aula deste esporte em {data_formatada}!")
 
-            # Se passou por todas as travas acima, aí sim cria a aula e vincula todos
-            id_aula_gerado = AulaDAO.inserir(Aula(0, id_esporte, data_atual, id_instrutor, False))
+            # Removido o False (confirmada) da criação do objeto Aula
+            id_aula_gerado = AulaDAO.inserir(Aula(0, id_esporte, data_atual, id_instrutor))
             
             if id_aula_gerado:
                 for aluno in alunos_aptos:
                     AulaAlunoDAO.inserir(AulaAluno(None, id_aula_gerado, aluno.get_id()))
 
-            # Incremento da data para a próxima aula do lote
             if intervalo_tipo == "dias": data_atual += timedelta(days=intervalo_valor)
             elif intervalo_tipo == "semanas": data_atual += timedelta(weeks=intervalo_valor)
             elif intervalo_tipo == "meses": data_atual += timedelta(days=30 * intervalo_valor)
 
+    @staticmethod
     def aulas_do_aluno(aluno_id):
         aulas = View.aula_listar()
-        aula_alunos = View.aula_aluno_listar()  # assume que você tem AulaAlunoDAO.listar()
+        aula_alunos = View.aula_aluno_listar() 
         ids_aulas_do_aluno = [
             aa.get_id_aula() for aa in aula_alunos if aa.get_id_aluno() == aluno_id]
         return [a for a in aulas if a.get_id() in ids_aulas_do_aluno]
+
+    @staticmethod
     def alunos_da_aula(aula):
-        # 1. Pega todos os vínculos (ponte aluno-aula)
         vinculacoes = AulaAlunoDAO.listar()
-        # 2. Pega todos os alunos cadastrados
         todos_alunos = View.aluno_listar()
-        
-        # 3. Filtra apenas os IDs dos alunos que estão vinculados a ESTA aula específica
         ids_alunos_na_aula = [v.get_id_aluno() for v in vinculacoes if v.get_id_aula() == aula.get_id()]
         
-        # 4. Retorna a lista de objetos Aluno
         return [a for a in todos_alunos if a.get_id() in ids_alunos_na_aula]
-    
-    # AULA ALUNO
 
-    def aula_aluno_listar():
+    @staticmethod
+    def aula_aluno_listar(): # Adicionar ao diagrama de operaçôes ✅
         return AulaAlunoDAO.listar()
 
     # INSCRIÇÃO
-
     def inscricao_listar():
         return InscricaoDAO.listar()
 
@@ -459,7 +449,7 @@ class View:
                 raise ValueError(f"Não é possível cancelar uma inscrição com status '{inscricao.get_status()}'.")
             InscricaoDAO.excluir(id)
 
-    def inscricao_confirmar(id_inscricao):
+    def inscricao_confirmar(id_inscricao): # Adicionar ao diagrama de operaçôes ✅
         ins = InscricaoDAO.listar_id(id_inscricao)
         if ins is None:
             raise ValueError("Inscrição não encontrada.")
@@ -480,8 +470,7 @@ class View:
             id=None,
             status=status,
             valor=valor,
-            id_inscricao=id_inscricao
-        )
+            id_inscricao=id_inscricao)
         PagamentoDAO.inserir(p)
         return p
 
@@ -501,17 +490,18 @@ class View:
         if p is None:
             raise ValueError("Pagamento não encontrado.")
         PagamentoDAO.excluir(id)
-
     @staticmethod
-    def sincronizar_vinculos_existentes():
-        inscricoes = View.inscricao_listar()
-        aulas = View.aula_listar()
-        vinculos_atuais = View.aula_aluno_listar()
-        for aula in aulas:
-            for ins in inscricoes:
-                if ins.get_id_esporte() == aula.get_id_esporte() and ins.get_status() == "Confirmado":
-                    ja_vinculado = any(v.get_id_aula() == aula.get_id() and 
-                                       v.get_id_aluno() == ins.get_id_aluno() 
-                                       for v in vinculos_atuais)
-                    if not ja_vinculado and not View.aluno_tem_conflito_horario(ins.get_id_aluno(), aula.get_dia()):
-                        AulaAlunoDAO.inserir(AulaAluno(None, aula.get_id(), ins.get_id_aluno()))
+    def pagamento_confirmar_fluxo(id_inscricao, valor): # Adicionar ao diagrama de operações/view ✅
+        """
+        Realiza o fluxo completo: Cria o registro de pagamento e 
+        atualiza o status da inscrição para 'Confirmado'.
+        """
+        try:
+            View.pagamento_inserir(
+                status="Pago",
+                valor=valor,
+                id_inscricao=id_inscricao)
+            View.inscricao_confirmar(id_inscricao)
+            View.sincronizar_vinculos_existentes()
+        except Exception as e:
+            raise ValueError(f"Falha na operação: {e}")
