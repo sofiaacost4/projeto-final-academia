@@ -4,7 +4,7 @@
 
 **1 Resumo**
 
-O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos registros (alunos ou instrutores) no sistema, armazenando seus dados principais para que possam acessar e utilizar as funcionalidades específicas de cada perfil.
+O caso de uso Cadastrar aluno tem a finalidade de inserir novos registros (alunos) no sistema, armazenando seus dados principais para que possam acessar e utilizar as funcionalidades específicas de cada perfil.
 
 **2 Atores**
 
@@ -30,7 +30,7 @@ O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos regist
 1. O Usuário seleciona o tipo de perfil a ser cadastrado (aluno);  
 2. O Usuário inicia a função de cadastro de novo usuário;  
 3. O sistema exibe o formulário de cadastro;  
-4. O Usuário preenche todos os campos obrigatórios (nome, email, telefone e senha);  
+4. O Usuário preenche todos os campos obrigatórios (nome, email e senha);  
 5. O Usuário confirma o cadastro;  
 6. O sistema valida os dados;  
 7. O sistema cria o registro e persiste os dados na base;  
@@ -42,13 +42,6 @@ O caso de uso Cadastrar aluno/instrutor tem a finalidade de inserir novos regist
 * Pós Passo 4 do Fluxo Principal;  
 * O Usuário preenche campos opcionais;  
 * Continua a partir do Passo 5 do Fluxo Principal.
-
-	  
-	*A2: Seleção de Perfil por Permissão*
-
-* Pós Passo 3 do Fluxo Principal;  
-* Se o perfil for Instrutor,  o sistema pode solicitar informações adicionais obrigatórias específicas (Ex: Certificações);  
-* Continua a partir do Passo 4 do Fluxo Principal.
 
 **5.3 Fluxo de exceção**  
 	*E1: Dados Inválidos ou Incompletos*
