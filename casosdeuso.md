@@ -1,4 +1,4 @@
-## 📑 Caso de Uso 003: Cadastrar Aluno 
+## Caso de Uso 003: Cadastrar Aluno 
 
 ### 1. Resumo
 O caso de uso **Cadastrar aluno** tem a finalidade de inserir novos registros (**alunos** ou **instrutores**) no sistema, armazenando seus dados principais para que possam acessar e utilizar as funcionalidades específicas de cada perfil.
@@ -58,7 +58,7 @@ O caso de uso **Cadastrar aluno** tem a finalidade de inserir novos registros (*
 * O sistema interrompe o processamento e exibe uma mensagem de erro informando que o usuário já está cadastrado;  
 * O Usuário pode tentar cadastrar um usuário diferente ou cancelar a operação.
 
-## 🔒 Caso de Uso 013: Fazer Login
+## Caso de Uso 013: Fazer Login
 
 ### 1. Resumo
 O caso de uso **Fazer Login** permite que qualquer usuário cadastrado (**Aluno**, **Instrutor** ou **Administrador**) acesse o sistema após a validação de suas credenciais.
@@ -118,7 +118,7 @@ O caso de uso **Fazer Login** permite que qualquer usuário cadastrado (**Aluno*
 * O sistema **interrompe o processamento** e exibe uma **mensagem de erro técnico**.
 * O Usuário **permanece na tela de login**.
 
-## ➕ Caso de Uso 005: Cadastrar Esporte
+## Caso de Uso 005: Cadastrar Esporte
 
 ### 1. Resumo
 O caso de uso **Cadastrar Esporte** permite que um Instrutor ou Administrador adicione um novo módulo de conteúdo ou esporte a um curso existente no sistema.
