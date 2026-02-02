@@ -1,7 +1,7 @@
-## 📑 Caso de Uso 003: Cadastrar Aluno/Instrutor 
+## 📑 Caso de Uso 003: Cadastrar Aluno 
 
 ### 1. Resumo
-O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos registros (**alunos** ou **instrutores**) no sistema, armazenando seus dados principais para que possam acessar e utilizar as funcionalidades específicas de cada perfil.
+O caso de uso **Cadastrar aluno** tem a finalidade de inserir novos registros (**alunos** ou **instrutores**) no sistema, armazenando seus dados principais para que possam acessar e utilizar as funcionalidades específicas de cada perfil.
 
 ---
 
@@ -19,10 +19,10 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 ---
 
 ### 4. Pós-condições
-* Um novo registro de usuário (**aluno ou instrutor**) é criado com sucesso e **persistido na base de dados**.
+* Um novo registro de usuário (**aluno) é criado com sucesso e **persistido na base de dados**.
 * O novo usuário recebe um **identificador único (ID)** e as **credenciais iniciais (login/senha)** são geradas/definidas.
-* O novo usuário está associado ao **perfil correto** (aluno ou instrutor).
-* O sistema retorna uma **mensagem de sucesso** ao Usuário Ator.
+* O novo usuário está associado ao **perfil correto** (aluno).
+* O sistema retorna uma **mensagem de sucesso** ao Usuário.
 
 ---
 
@@ -31,8 +31,8 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 #### 5.1 Fluxo Básico
 1. O Usuário inicia a função de **cadastro de novo usuário**.
 2. O sistema exibe o **formulário de cadastro**.
-3. O Usuário **seleciona o tipo de perfil** (aluno ou instrutor).
-4. O Usuário **preenche todos os campos obrigatórios: nome, senha, e no caso do instrutor, especialidade também**.
+3. O Usuário **seleciona o tipo de perfil** (aluno).
+4. O Usuário **preenche todos os campos obrigatórios: nome, email e senha**.
 5. O Usuário **confirma o cadastro**.
 6. O sistema **valida os dados**.
 7. O sistema **cria o registro** e **persiste os dados na base**.
@@ -41,12 +41,8 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 #### 5.2 Fluxo Alternativo
 
 ##### A1: Dados Opcionais Preenchidos
-* **Pós Passo 4** do Fluxo Principal: O Usuário Ator preenche **campos opcionais: email e telefone**.
+* **Pós Passo 4** do Fluxo Principal: O Usuário preenche **campos opcionais: email e telefone**.
 * Continua a partir do **Passo 5** do Fluxo Principal.
-
-##### A2: Seleção de Perfil por Permissão
-* **Pós Passo 3** do Fluxo Principal: Se o perfil for **Instrutor**, o sistema pode solicitar **informações adicionais obrigatórias específicas** (Ex: Certificações).
-* Continua a partir do **Passo 4** do Fluxo Principal.
 
 #### 5.3 Fluxo de Exceção
 
@@ -58,7 +54,9 @@ O caso de uso **Cadastrar aluno/instrutor** tem a finalidade de inserir novos re
 
 ##### E2: Usuário Já Cadastrado
 * Ocorre no **Passo 6** do Fluxo Principal.
-* O sistema detecta que o **identificador
+* O sistema detecta que o **identificador único já existe na base de dados;  
+* O sistema interrompe o processamento e exibe uma mensagem de erro informando que o usuário já está cadastrado;  
+* O Usuário pode tentar cadastrar um usuário diferente ou cancelar a operação.
 
 ## 🔒 Caso de Uso 013: Fazer Login
 
