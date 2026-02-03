@@ -153,7 +153,6 @@ class View:
         return None
 
     # ESPORTE
-    # Novas funcionalidades
 
     def esporte_listar():
         r = EsporteDAO.listar()
@@ -261,7 +260,6 @@ class View:
                 a.get_dia() == data_hora):
                 raise ValueError(
                     "Já existe uma aula desse esporte com esse instrutor nesse dia e horário.")
-        # Removido confirmada=False
         AulaDAO.inserir(
             Aula(
                 id=0,
@@ -271,7 +269,6 @@ class View:
 
     @staticmethod
     def aula_atualizar(id, id_esporte, dia, id_instrutor):
-        # Removido parâmetro 'confirmado'
         for a in View.aula_listar():
             if (
                 a.get_id() != id and
@@ -279,8 +276,6 @@ class View:
                 a.get_id_instrutor() == id_instrutor):
                 raise ValueError(
                     "Essa data já está cadastrada na agenda deste instrutor.")
-        
-        # Objeto Aula criado sem o atributo de confirmação
         aula = Aula(
             id=id,
             id_esporte=id_esporte,
@@ -324,7 +319,6 @@ class View:
     @staticmethod
     def criar_aulas_em_lote(id_esporte, id_instrutor, datas):
         for dia in datas:
-            # Removido confirmada=False
             AulaDAO.inserir(
                 Aula(
                     id=0,
@@ -385,8 +379,6 @@ class View:
             )
             if ja_existe_aula:
                 raise ValueError(f"Erro: Já existe uma aula deste esporte em {data_formatada}!")
-
-            # Removido o False (confirmada) da criação do objeto Aula
             id_aula_gerado = AulaDAO.inserir(Aula(0, id_esporte, data_atual, id_instrutor))
             
             if id_aula_gerado:
@@ -414,7 +406,7 @@ class View:
         return [a for a in todos_alunos if a.get_id() in ids_alunos_na_aula]
 
     @staticmethod
-    def aula_aluno_listar(): # Adicionar ao diagrama de operaçôes ✅
+    def aula_aluno_listar():
         return AulaAlunoDAO.listar()
 
     # INSCRIÇÃO
@@ -425,7 +417,6 @@ class View:
         return InscricaoDAO.listar_id()
 
     def inscricao_inserir(id_aluno, id_esporte, status):
-            # Validação: Verifica se existe algum instrutor com a especialidade do esporte
             instrutores = View.instrutor_listar_obj()
             tem_instrutor = any(i.get_especialidade() == id_esporte for i in instrutores)
 
@@ -449,7 +440,7 @@ class View:
                 raise ValueError(f"Não é possível cancelar uma inscrição com status '{inscricao.get_status()}'.")
             InscricaoDAO.excluir(id)
 
-    def inscricao_confirmar(id_inscricao): # Adicionar ao diagrama de operaçôes ✅
+    def inscricao_confirmar(id_inscricao):
         ins = InscricaoDAO.listar_id(id_inscricao)
         if ins is None:
             raise ValueError("Inscrição não encontrada.")
@@ -491,7 +482,7 @@ class View:
             raise ValueError("Pagamento não encontrado.")
         PagamentoDAO.excluir(id)
     @staticmethod
-    def pagamento_confirmar_fluxo(id_inscricao, valor): # Adicionar ao diagrama de operações/view ✅
+    def pagamento_confirmar_fluxo(id_inscricao, valor):
         """
         Realiza o fluxo completo: Cria o registro de pagamento e 
         atualiza o status da inscrição para 'Confirmado'.
