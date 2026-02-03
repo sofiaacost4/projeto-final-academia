@@ -502,6 +502,5 @@ class View:
                 valor=valor,
                 id_inscricao=id_inscricao)
             View.inscricao_confirmar(id_inscricao)
-            View.sincronizar_vinculos_existentes()
         except Exception as e:
             raise ValueError(f"Falha na operação: {e}")
